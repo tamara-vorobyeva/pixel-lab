@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jack Russell & Redhair Cat Pixel Scene</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #121c22;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -o-crisp-edges;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.9);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const LOGICAL_W = 128;
+        const LOGICAL_H = 96;
+
+        const displayCanvas = document.getElementById('gameCanvas');
+        const displayCtx = displayCanvas.getContext('2d');
+
+        const offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = LOGICAL_W;
+        offscreenCanvas.height = LOGICAL_H;
+        const ctx = offscreenCanvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        // Custom 24-color Mediterranean palette
+        const PALETTE = {
+            SKY_TOP: '#64b5f6',
+            SKY_BOT: '#90caf9',
+            CLOUD: '#ffffff',
+            
+            HILL_DISTANT: '#43a047',
+            HILL_MID: '#2e7d32',
+            HILL_DARK: '#1b5e20',
+            
+            PALM_TRUNK: '#795548',
+            PALM_DARK_TRUNK: '#4e342e',
+            PALM_LEAF: '#388e3c',
+            PALM_LIGHT_LEAF: '#66bb6a',
+
+            HOUSE_WALL: '#fff8e1',
+            HOUSE_SHADOW: '#ffe082',
+            ROOF_RED: '#e53935',
+            ROOF_DARK: '#b71c1c',
+            WINDOW_DARK: '#263238',
+
+            GRASS_TOP: '#76ff03',
+            GRASS_DARK: '#52b202',
+            DIRT_DARK: '#4e342e',
+            DIRT_LIGHT: '#8d6e63',
+            DIRT_ACCENT: '#a1887f',
+            ROCK_GRAY: '#78909c',
+
+            DOG_WHITE: '#ffffff',
+            DOG_SHADOW: '#cfd8dc',
+            DOG_BROWN: '#e65100',
+            DOG_DARK_BROWN: '#bf360c',
+            DOG_NOSE: '#1a161a',
+            DOG_COLLAR: '#d50000',
+
+            BUSH_DARK: '#1b5e20',
+            BUSH_MED: '#2e7d32',
+            BUSH_LIGHT: '#43a047',
+            BUSH_HIGHLIGHT: '#76ff03',
+            ROSE_RED: '#ff1744',
+            ROSE_PINK: '#ff80ab',
+
+            CAT_GINGER: '#ff6d00',
+            CAT_DARK_GINGER: '#dd2c00',
+            CAT_WHITE: '#ffffff',
+            CAT_EYE: '#00e676',
+            CAT_NOSE: '#ff80ab',
+
+            SNIFF_BUBBLE: '#e0f7fa',
+            HEART_RED: '#ff1744',
+            SPARKLE_GOLD: '#ffd600'
+        };
+
+        const STATES = {
+            SNIFF_WALK: 0,
+            SNEAK: 1,
+            ENTER_BUSH: 2,
+            BUSH_OPEN: 3,
+            CAT_REVEAL: 4,
+            RESET_WAIT: 5
+        };
+
+        let currentState = STATES.SNIFF_WALK;
+        let stateTimer = 0;
+        let globalFrame = 0;
+
+        const dog = {
+            worldX: 6,
+            worldY: 66,
+            sniffCycle: 0,
+            isSneaking: false,
+            isInsideBush: false
+        };
+
+        const bush = {
+            worldX: 86,
+            worldY: 48,
+            openProgress: 0
+        };
+
+        // Redhair cat clearly placed high inside bush frame
+        const cat = {
+            worldX: 92,
+            worldY: 42,
+            blinkTimer: 0
+        };
+
+        const MAX_PARTICLES = 30;
+        const particlePool = new Array(MAX_PARTICLES);
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+            particlePool[i] = {
+                active: false,
+                x: 0,
+                y: 0,
+                vx: 0,
+                vy: 0,
+                life: 0,
+                color: '#ffffff',
+                type: 'dot'
+            };
+        }
+
+        function spawnParticle(x, y, vx, vy, life, color, type = 'dot') {
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                const p = particlePool[i];
+                if (!p.active) {
+                    p.active = true;
+                    p.x = x;
+                    p.y = y;
+                    p.vx = vx;
+                    p.vy = vy;
+                    p.life = life;
+                    p.color = color;
+                    p.type = type;
+                    break;
+                }
+            }
+        }
+
+        function updateParticles() {
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                const p = particlePool[i];
+                if (p.active) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life--;
+                    if (p.life <= 0) p.active = false;
+                }
+            }
+        }
+
+        function drawPixel(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(Math.floor(x), Math.floor(y), 1, 1);
+        }
+
+        function drawRect(x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(w), Math.floor(h));
+        }
+
+        function getGroundY(worldX) {
+            const bump1 = Math.sin(worldX * 0.12) * 1.8;
+            const bump2 = Math.cos(worldX * 0.05) * 2.2;
+            return Math.floor(66 + bump1 + bump2);
+        }
+
+        function drawPalmTree(x, y) {
+            const px = Math.floor(x);
+            const py = Math.floor(y);
+
+            // Curved Trunk
+            drawRect(px, py + 12, 3, 14, PALETTE.PALM_TRUNK);
+            drawRect(px + 1, py + 4, 3, 9, PALETTE.PALM_TRUNK);
+            drawRect(px + 2, py, 3, 5, PALETTE.PALM_TRUNK);
+            
+            // Trunk Texture Rings
+            drawPixel(px, py + 14, PALETTE.PALM_DARK_TRUNK);
+            drawPixel(px + 1, py + 10, PALETTE.PALM_DARK_TRUNK);
+            drawPixel(px + 2, py + 6, PALETTE.PALM_DARK_TRUNK);
+            drawPixel(px + 3, py + 2, PALETTE.PALM_DARK_TRUNK);
+
+            // Palm Fronds / Canopy
+            // Top Leaves
+            drawRect(px - 6, py - 4, 16, 2, PALETTE.PALM_LEAF);
+            drawRect(px - 10, py - 2, 22, 2, PALETTE.PALM_LEAF);
+            // Drooping Fronds Left
+            drawRect(px - 12, py, 5, 2, PALETTE.PALM_LIGHT_LEAF);
+            drawRect(px - 14, py + 2, 4, 2, PALETTE.PALM_LEAF);
+            drawRect(px - 15, py + 4, 2, 3, PALETTE.PALM_LEAF);
+            // Drooping Fronds Right
+            drawRect(px + 8, py, 5, 2, PALETTE.PALM_LIGHT_LEAF);
+            drawRect(px + 11, py + 2, 4, 2, PALETTE.PALM_LEAF);
+            drawRect(px + 14, py + 4, 2, 3, PALETTE.PALM_LEAF);
+            // Center High Tufts
+            drawRect(px - 2, py - 6, 6, 3, PALETTE.PALM_LIGHT_LEAF);
+        }
+
+        function drawEnvironment() {
+            // Sunny Sky
+            drawRect(0, 0, 128, 20, PALETTE.SKY_TOP);
+            drawRect(0, 20, 128, 18, PALETTE.SKY_BOT);
+
+            // Clouds
+            const cloudX1 = Math.floor((globalFrame * 0.1) % 160) - 30;
+            drawRect(cloudX1, 5, 20, 4, PALETTE.CLOUD);
+            drawRect(cloudX1 + 4, 3, 12, 2, PALETTE.CLOUD);
+
+            const cloudX2 = Math.floor((globalFrame * 0.06 + 80) % 160) - 30;
+            drawRect(cloudX2, 10, 16, 3, PALETTE.CLOUD);
+
+            // Lush Green Rolling Hills (Replaces dark background)
+            for (let x = 0; x < LOGICAL_W; x++) {
+                const hillY1 = Math.floor(28 + Math.sin(x * 0.04) * 4);
+                const hillY2 = Math.floor(34 + Math.cos(x * 0.06) * 5);
+
+                drawPixel(x, hillY1, PALETTE.HILL_DISTANT);
+                drawRect(x, hillY1 + 1, 1, 8, PALETTE.HILL_DISTANT);
+
+                drawPixel(x, hillY2, PALETTE.HILL_MID);
+                drawRect(x, hillY2 + 1, 1, 12, PALETTE.HILL_MID);
+            }
+
+            // Mediterranean Spanish White Houses
+            // House 1 (Left)
+            drawRect(8, 24, 24, 20, PALETTE.HOUSE_WALL);
+            drawRect(8, 24, 2, 20, PALETTE.HOUSE_SHADOW);
+            drawRect(6, 21, 28, 3, PALETTE.ROOF_RED);
+            drawRect(6, 23, 28, 1, PALETTE.ROOF_DARK);
+            drawRect(12, 28, 5, 5, PALETTE.WINDOW_DARK);
+            drawRect(21, 28, 5, 5, PALETTE.WINDOW_DARK);
+
+            // House 2 (Right)
+            drawRect(64, 22, 26, 22, PALETTE.HOUSE_WALL);
+            drawRect(64, 22, 2, 22, PALETTE.HOUSE_SHADOW);
+            drawRect(62, 19, 30, 3, PALETTE.ROOF_RED);
+            drawRect(62, 21, 30, 1, PALETTE.ROOF_DARK);
+            drawRect(72, 26, 6, 6, PALETTE.WINDOW_DARK);
+
+            // Palm Trees (Lush coastal Mediterranean vibe)
+            drawPalmTree(38, 20);
+            drawPalmTree(54, 24);
+            drawPalmTree(104, 22);
+
+            // Uneven Soil & Grass Terrain
+            for (let x = 0; x < LOGICAL_W; x++) {
+                const surfaceY = getGroundY(x);
+
+                drawPixel(x, surfaceY, PALETTE.GRASS_TOP);
+                drawPixel(x, surfaceY + 1, (x % 3 === 0) ? PALETTE.GRASS_DARK : PALETTE.GRASS_TOP);
+
+                for (let y = surfaceY + 2; y < LOGICAL_H; y++) {
+                    const depth = y - surfaceY;
+                    let col = PALETTE.DIRT_DARK;
+
+                    if (depth < 5) {
+                        col = ((x + y * 3) % 7 < 3) ? PALETTE.DIRT_LIGHT : PALETTE.DIRT_DARK;
+                    } else {
+                        col = ((x * 5 + y * 2) % 11 < 4) ? PALETTE.DIRT_ACCENT : PALETTE.DIRT_DARK;
+                    }
+
+                    if ((x * 13 + y * 7) % 79 === 0) col = PALETTE.ROCK_GRAY;
+
+                    drawPixel(x, y, col);
+                }
+
+                if ((x * 11) % 17 < 4) {
+                    drawPixel(x, surfaceY - 1, PALETTE.GRASS_TOP);
+                }
+            }
+        }
+
+        function drawJackRussell(x, y, sniffCycle, pose) {
+            const px = Math.floor(x);
+            const groundY = getGroundY(px + 8);
+            const py = Math.floor(groundY - 10);
+
+            const phase = Math.floor(sniffCycle * 4) / 4; 
+
+            if (pose.isInsideBush) {
+                // Tail poking out back of bush
+                const tailWagY = (globalFrame % 6 < 3) ? 0 : 1;
+                drawRect(px - 2, py + 3 + tailWagY, 3, 2, PALETTE.DOG_WHITE);
+                drawPixel(px - 3, py + 2 + tailWagY, PALETTE.DOG_BROWN);
+                return;
+            }
+
+            if (pose.isSneaking) {
+                // Low sneak posture crawling forward
+                const sneakY = py + 3;
+                drawRect(px + 1, sneakY + 5, 2, 3, PALETTE.DOG_WHITE);
+                drawRect(px + 9, sneakY + 5, 2, 3, PALETTE.DOG_WHITE);
+                drawRect(px, sneakY + 1, 12, 5, PALETTE.DOG_WHITE);
+                drawRect(px + 3, sneakY + 1, 4, 3, PALETTE.DOG_BROWN);
+                drawRect(px + 11, sneakY, 5, 5, PALETTE.DOG_WHITE);
+                drawRect(px + 13, sneakY, 3, 3, PALETTE.DOG_BROWN);
+                drawRect(px + 15, sneakY + 2, 3, 2, PALETTE.DOG_WHITE);
+                drawPixel(px + 18, sneakY + 3, PALETTE.DOG_NOSE);
+                drawPixel(px + 13, sneakY + 1, PALETTE.DOG_NOSE);
+                drawRect(px + 11, sneakY - 1, 3, 2, PALETTE.DOG_DARK_BROWN);
+                const tailY = sneakY + ((globalFrame % 6 < 3) ? 1 : 2);
+                drawRect(px - 3, tailY, 4, 2, PALETTE.DOG_WHITE);
+                return;
+            }
+
+            // Sniffing pose: Nose touching dirt, Rear elevated high
+            const buttElevation = Math.floor(phase * 5); // Ass raised 0-5px
+            const noseDrop = Math.floor(phase * 3);
+
+            const rearY = py - buttElevation;
+            const frontY = py;
+
+            // Tail high & perked
+            const tailWagY = (globalFrame % 8 < 4) ? 0 : 1;
+            drawRect(px - 2, rearY - 4 + tailWagY, 2, 5, PALETTE.DOG_WHITE);
+            drawPixel(px - 3, rearY - 5 + tailWagY, PALETTE.DOG_BROWN);
+
+            // Extended hind legs
+            const legWalk = Math.floor(Math.sin(globalFrame * 0.4) * 2);
+            drawRect(px + 1 + legWalk, rearY + 5, 2, 6 + buttElevation, PALETTE.DOG_SHADOW);
+            drawRect(px + 4 - legWalk, rearY + 5, 2, 6 + buttElevation, PALETTE.DOG_WHITE);
+
+            // Angular body
+            drawRect(px, rearY + 1, 6, 6, PALETTE.DOG_WHITE);
+            drawRect(px + 2, rearY + 1, 4, 4, PALETTE.DOG_BROWN);
+            drawRect(px + 6, frontY + 2, 6, 5, PALETTE.DOG_WHITE);
+
+            // Front legs
+            drawRect(px + 8 - legWalk, frontY + 6, 2, 5, PALETTE.DOG_SHADOW);
+            drawRect(px + 10 + legWalk, frontY + 6, 2, 5, PALETTE.DOG_WHITE);
+
+            // Collar
+            drawRect(px + 10, frontY + 3, 2, 3, PALETTE.DOG_COLLAR);
+
+            // Head lowered so nose touches soil directly
+            const headY = frontY + noseDrop + 1;
+            drawRect(px + 11, headY - 1, 6, 5, PALETTE.DOG_WHITE);
+            drawRect(px + 13, headY - 1, 4, 4, PALETTE.DOG_BROWN);
+            drawRect(px + 12, headY - 4, 2, 3, PALETTE.DOG_DARK_BROWN);
+
+            // Snout pressing ground
+            drawRect(px + 15, headY + 2, 4, 3, PALETTE.DOG_WHITE);
+            drawPixel(px + 18, headY + 4, PALETTE.DOG_NOSE); // Touch ground!
+            drawPixel(px + 14, headY + 1, PALETTE.DOG_NOSE);
+        }
+
+        function drawCat(x, y, isBlinking) {
+            const px = Math.floor(x);
+            const py = Math.floor(y);
+
+            // Body sitting upright
+            drawRect(px + 1, py + 4, 10, 10, PALETTE.CAT_GINGER);
+            drawRect(px + 3, py + 6, 6, 7, PALETTE.CAT_WHITE); // White chest
+
+            // Ginger Stripes
+            drawPixel(px + 2, py + 5, PALETTE.CAT_DARK_GINGER);
+            drawPixel(px + 9, py + 8, PALETTE.CAT_DARK_GINGER);
+
+            // Front Paws
+            drawRect(px + 3, py + 13, 2, 2, PALETTE.CAT_WHITE);
+            drawRect(px + 7, py + 13, 2, 2, PALETTE.CAT_WHITE);
+
+            // Big Cute Cat Head
+            drawRect(px, py - 4, 12, 9, PALETTE.CAT_GINGER);
+
+            // Triangular Ears
+            drawPixel(px + 1, py - 7, PALETTE.CAT_DARK_GINGER);
+            drawRect(px + 1, py - 6, 3, 2, PALETTE.CAT_GINGER);
+            drawPixel(px + 10, py - 7, PALETTE.CAT_DARK_GINGER);
+            drawRect(px + 8, py - 6, 3, 2, PALETTE.CAT_GINGER);
+
+            // Bright Emerald Green Eyes / Blink
+            if (isBlinking) {
+                drawRect(px + 2, py, 3, 1, PALETTE.CAT_DARK_GINGER);
+                drawRect(px + 7, py, 3, 1, PALETTE.CAT_DARK_GINGER);
+            } else {
+                drawRect(px + 2, py - 1, 3, 3, PALETTE.CAT_EYE);
+                drawRect(px + 7, py - 1, 3, 3, PALETTE.CAT_EYE);
+                drawPixel(px + 3, py, PALETTE.DOG_NOSE); // Pupil
+                drawPixel(px + 8, py, PALETTE.DOG_NOSE); // Pupil
+            }
+
+            // Pink Nose & Whiskers
+            drawPixel(px + 5, py + 2, PALETTE.CAT_NOSE);
+            drawPixel(px + 6, py + 2, PALETTE.CAT_NOSE);
+            drawPixel(px - 1, py + 1, PALETTE.CAT_WHITE);
+            drawPixel(px + 12, py + 1, PALETTE.CAT_WHITE);
+
+            // Fluffy Tail curling on side
+            drawRect(px + 11, py + 8, 3, 4, PALETTE.CAT_GINGER);
+            drawRect(px + 12, py + 5, 2, 3, PALETTE.CAT_GINGER);
+        }
+
+        function drawOrganicRoseBush(x, y, openProgress) {
+            const px = Math.floor(x);
+            const py = Math.floor(y);
+
+            // Dark interior shadow cavity where cat sits
+            drawRect(px - 2, py + 4, 22, 18, PALETTE.BUSH_DARK);
+
+            // Outer fixed base foliage
+            drawRect(px - 14, py + 10, 12, 14, PALETTE.BUSH_DARK);
+            drawRect(px + 20, py + 10, 12, 14, PALETTE.BUSH_DARK);
+
+            const splitX = Math.floor(openProgress * 14);
+
+            // Left Foliage Flap (slides left)
+            drawRect(px - 10 - splitX, py - 2, 16, 24, PALETTE.BUSH_MED);
+            drawRect(px - 6 - splitX, py + 2, 12, 18, PALETTE.BUSH_LIGHT);
+            drawRect(px - 4 - splitX, py + 4, 8, 12, PALETTE.BUSH_HIGHLIGHT);
+
+            // Right Foliage Flap (slides right)
+            drawRect(px + 12 + splitX, py - 2, 16, 24, PALETTE.BUSH_MED);
+            drawRect(px + 10 + splitX, py + 2, 12, 18, PALETTE.BUSH_LIGHT);
+            drawRect(px + 12 + splitX, py + 4, 8, 12, PALETTE.BUSH_HIGHLIGHT);
+
+            // Red Roses on bush flaps
+            drawRect(px - 6 - splitX, py - 4, 4, 4, PALETTE.ROSE_RED);
+            drawPixel(px - 5 - splitX, py - 3, PALETTE.ROSE_PINK);
+
+            drawRect(px + 16 + splitX, py + 6, 5, 5, PALETTE.ROSE_RED);
+            drawRect(px + 17 + splitX, py + 7, 3, 3, PALETTE.ROSE_PINK);
+
+            drawRect(px - 8 - splitX, py + 14, 4, 4, PALETTE.ROSE_RED);
+            drawPixel(px - 7 - splitX, py + 15, PALETTE.ROSE_PINK);
+
+            drawRect(px + 20 + splitX, py + 16, 4, 4, PALETTE.ROSE_RED);
+        }
+
+        function drawFX() {
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                const p = particlePool[i];
+                if (p.active) {
+                    if (p.type === 'heart') {
+                        drawPixel(p.x, p.y, p.color);
+                        drawPixel(p.x + 2, p.y, p.color);
+                        drawRect(p.x - 1, p.y + 1, 5, 1, p.color);
+                        drawRect(p.x, p.y + 2, 3, 1, p.color);
+                        drawPixel(p.x + 1, p.y + 3, p.color);
+                    } else if (p.type === 'bubble') {
+                        drawRect(p.x, p.y, 2, 2, p.color);
+                    } else {
+                        drawPixel(p.x, p.y, p.color);
+                    }
+                }
+            }
+        }
+
+        function updateLogic() {
+            globalFrame++;
+            stateTimer++;
+
+            switch (currentState) {
+                case STATES.SNIFF_WALK:
+                    dog.worldX += 0.35;
+                    dog.sniffCycle = (Math.sin(globalFrame * 0.18) + 1) / 2;
+                    dog.isSneaking = false;
+
+                    if (dog.sniffCycle > 0.85 && globalFrame % 8 === 0) {
+                        spawnParticle(
+                            dog.worldX + 18, getGroundY(dog.worldX + 18),
+                            (Math.random() - 0.5) * 0.3, -0.3 - Math.random() * 0.2,
+                            20, PALETTE.SNIFF_BUBBLE, 'bubble'
+                        );
+                    }
+
+                    if (dog.worldX >= 52) {
+                        currentState = STATES.SNEAK;
+                        stateTimer = 0;
+                    }
+                    break;
+
+                case STATES.SNEAK:
+                    dog.worldX += 0.22;
+                    dog.isSneaking = true;
+
+                    if (dog.worldX >= 70) {
+                        currentState = STATES.ENTER_BUSH;
+                        stateTimer = 0;
+                    }
+                    break;
+
+                case STATES.ENTER_BUSH:
+                    dog.worldX += 0.15;
+                    dog.isSneaking = true;
+
+                    if (dog.worldX >= 80) {
+                        dog.isInsideBush = true;
+                        currentState = STATES.BUSH_OPEN;
+                        stateTimer = 0;
+                    }
+                    break;
+
+                case STATES.BUSH_OPEN:
+                    if (bush.openProgress < 1.0) {
+                        bush.openProgress += 0.04;
+                    } else {
+                        currentState = STATES.CAT_REVEAL;
+                        stateTimer = 0;
+                    }
+                    break;
+
+                case STATES.CAT_REVEAL:
+                    cat.blinkTimer++;
+
+                    // Spawn hearts and sparkles over the cat
+                    if (stateTimer % 18 === 0) {
+                        spawnParticle(
+                            cat.worldX + 4, cat.worldY - 6,
+                            (Math.random() - 0.5) * 0.4, -0.5 - Math.random() * 0.3,
+                            35, PALETTE.HEART_RED, 'heart'
+                        );
+                        spawnParticle(
+                            cat.worldX + 2, cat.worldY + 2,
+                            (Math.random() - 0.5) * 0.5, -0.4 - Math.random() * 0.2,
+                            25, PALETTE.SPARKLE_GOLD, 'dot'
+                        );
+                    }
+
+                    if (stateTimer > 200) {
+                        currentState = STATES.RESET_WAIT;
+                        stateTimer = 0;
+                    }
+                    break;
+
+                case STATES.RESET_WAIT:
+                    dog.worldX = 6;
+                    dog.isSneaking = false;
+                    dog.isInsideBush = false;
+                    bush.openProgress = 0;
+                    currentState = STATES.SNIFF_WALK;
+                    stateTimer = 0;
+                    break;
+            }
+
+            updateParticles();
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+            // 1. Scene Background & Terrain
+            drawEnvironment();
+
+            // 2. Redhair Cat clearly rendered INSIDE bush area
+            const isCatBlinking = (cat.blinkTimer % 70) > 60;
+            drawCat(cat.worldX, cat.worldY, isCatBlinking);
+
+            // 3. Jack Russell Terrier
+            drawJackRussell(dog.worldX, dog.worldY, dog.sniffCycle, {
+                isSneaking: dog.isSneaking,
+                isInsideBush: dog.isInsideBush
+            });
+
+            // 4. Rose Bush Foliage (Opens to reveal cat)
+            drawOrganicRoseBush(bush.worldX, bush.worldY, bush.openProgress);
+
+            // 5. Particles
+            drawFX();
+
+            // Blit buffer to window
+            displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+
+            const scale = Math.max(1, Math.floor(Math.min(
+                window.innerWidth / LOGICAL_W,
+                window.innerHeight / LOGICAL_H
+            )));
+
+            const scaledW = LOGICAL_W * scale;
+            const scaledH = LOGICAL_H * scale;
+            const offsetX = Math.floor((displayCanvas.width - scaledW) / 2);
+            const offsetY = Math.floor((displayCanvas.height - scaledH) / 2);
+
+            displayCtx.imageSmoothingEnabled = false;
+            displayCtx.drawImage(
+                offscreenCanvas,
+                0, 0, LOGICAL_W, LOGICAL_H,
+                offsetX, offsetY, scaledW, scaledH
+            );
+        }
+
+        function resizeCanvas() {
+            displayCanvas.width = window.innerWidth;
+            displayCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function gameLoop() {
+            updateLogic();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.onload = function() {
+            gameLoop();
+        };
+    </script>
+</body>
+</html>

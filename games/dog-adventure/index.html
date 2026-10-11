@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Jack Russell Trampoline Pool Adventure</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      background-color: #0b0d10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: monospace;
+    }
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+      background: #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="displayCanvas"></canvas>
+
+  <script>
+    // --- CANVAS & SCALING SETUP ---
+    const LOGICAL_W = 128;
+    const LOGICAL_H = 96;
+
+    const offscreen = document.createElement('canvas');
+    offscreen.width = LOGICAL_W;
+    offscreen.height = LOGICAL_H;
+    const ctx = offscreen.getContext('2d', { alpha: false });
+
+    const display = document.getElementById('displayCanvas');
+    const displayCtx = display.getContext('2d', { alpha: false });
+
+    // --- COLOR PALETTE (Strict 24 Colors) ---
+    const PALETTE = {
+      SKY_TOP:     '#224466',
+      SKY_BOT:     '#447799',
+      SUN:         '#ffdd77',
+      PALM_TRUNK:  '#664422',
+      PALM_LEAF:   '#227733',
+      PALM_DARK:   '#114411',
+      GRASS_LIGHT: '#55aa33',
+      GRASS_DARK:  '#337722',
+      POOL_RIM:    '#3399ff',
+      POOL_INNER:  '#1155cc',
+      WATER_LIGHT: '#55ccff',
+      WATER_DEEP:  '#0088dd',
+      BOARD_WOOD:  '#cc8833',
+      BOARD_DARK:  '#884411',
+      DUCK_YELLOW: '#ffcc00',
+      DUCK_ORANGE: '#ff6600',
+      DOG_WHITE:   '#ffffff',
+      DOG_SHADOW:  '#c0c8d0',
+      DOG_BROWN:   '#c85a17',
+      DOG_NOSE:    '#111111',
+      DOG_COLLAR:  '#e62222',
+      CLOUD_WHITE: '#eef8ff',
+      SHADOW:      '#224422'
+    };
+
+    // --- UNEVEN TERRAIN PROFILE ---
+    function getTerrainY(x) {
+      if (x < 0) return 68;
+      if (x < 58) {
+        return 68 + Math.round(Math.sin(x * 0.12) * 2.5 + Math.cos(x * 0.22) * 1.5);
+      }
+      return 68;
+    }
+
+    // --- GAME STATES ---
+    const STATES = {
+      APPROACH:    'APPROACH',
+      OBSERVE:     'OBSERVE',
+      JUMP_IN:     'JUMP_IN',     // Jump onto springboard
+      CREEPING:    'CREEPING',    // Creep toward edge of board
+      POUNCE_PREP: 'POUNCE_PREP', // High rump pounce pose watching ducks
+      FLY_UP:      'FLY_UP',      // Extended floaty flight with 360 somersaults
+      RESET:       'RESET'
+    };
+
+    let state = STATES.APPROACH;
+    let stateTimer = 0;
+    let screenShake = 0;
+    let springCompress = 0;
+
+    const POOL_X = 60;
+    const POOL_Y = 58;
+    const POOL_W = 60;
+    const POOL_H = 28;
+
+    const BOARD_X = POOL_X + 8;
+    const BOARD_Y = POOL_Y + 8;
+
+    let dog = {
+      x: -28,
+      y: 68,
+      vx: 0,
+      vy: 0,
+      frame: 0,
+      animTimer: 0,
+      bounceY: 0,
+      wobble: 0,
+      tailWag: 0,
+      flipFrame: 0
+    };
+
+    // Ducks in pool
+    let ducks = [
+      { x: POOL_X + 28, y: POOL_Y + 12, bobOffset: 0, hopY: 0, hopVy: 0 },
+      { x: POOL_X + 42, y: POOL_Y + 15, bobOffset: 1.5, hopY: 0, hopVy: 0 },
+      { x: POOL_X + 48, y: POOL_Y + 8,  bobOffset: 3.0, hopY: 0, hopVy: 0 }
+    ];
+
+    // Particle Pool
+    const MAX_PARTICLES = 80;
+    const particles = [];
+    for (let i = 0; i < MAX_PARTICLES; i++) {
+      particles.push({ active: false, x: 0, y: 0, vx: 0, vy: 0, color: '#fff', life: 0 });
+    }
+
+    function spawnParticle(x, y, vx, vy, color, life) {
+      for (let i = 0; i < MAX_PARTICLES; i++) {
+        if (!particles[i].active) {
+          particles[i].active = true;
+          particles[i].x = x;
+          particles[i].y = y;
+          particles[i].vx = vx;
+          particles[i].vy = vy;
+          particles[i].color = color;
+          particles[i].life = life;
+          return;
+        }
+      }
+    }
+
+    // --- RESIZE BLITTING ---
+    function resizeCanvas() {
+      const scale = Math.max(1, Math.floor(Math.min(window.innerWidth / LOGICAL_W, window.innerHeight / LOGICAL_H)));
+      display.width = LOGICAL_W * scale;
+      display.height = LOGICAL_H * scale;
+      displayCtx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = false;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function resetScene() {
+      state = STATES.APPROACH;
+      stateTimer = 0;
+      springCompress = 0;
+      dog.x = -28;
+      dog.y = 68;
+      dog.vx = 0;
+      dog.vy = 0;
+      dog.bounceY = 0;
+      dog.wobble = 0;
+      dog.flipFrame = 0;
+
+      ducks.forEach(d => { d.hopY = 0; d.hopVy = 0; });
+      for (let p of particles) p.active = false;
+    }
+
+    window.addEventListener('click', () => {
+      if (state === STATES.APPROACH || state === STATES.OBSERVE) {
+        triggerJump();
+      }
+    });
+
+    function triggerJump() {
+      state = STATES.JUMP_IN;
+      stateTimer = 0;
+      
+      const targetX = BOARD_X - 4;
+      const dx = targetX - dog.x;
+
+      dog.vx = dx / 18;
+      dog.vy = -3.2;
+    }
+
+    function triggerDuckHop() {
+      ducks.forEach((d, i) => {
+        d.hopVy = -1.8 - (i * 0.2);
+      });
+    }
+
+    function spawnPoolSplash(x, y) {
+      for (let i = 0; i < 18; i++) {
+        const vx = (Math.random() - 0.5) * 2.8;
+        const vy = -1.2 - Math.random() * 2.0;
+        const color = (Math.random() > 0.3) ? PALETTE.WATER_LIGHT : PALETTE.CLOUD_WHITE;
+        spawnParticle(x + (Math.random() - 0.5) * 8, y, vx, vy, color, 15 + Math.random() * 10);
+      }
+    }
+
+    // --- UPDATE LOOP ---
+    function update() {
+      stateTimer++;
+
+      switch (state) {
+        case STATES.APPROACH:
+          dog.x += 0.45;
+          dog.animTimer++;
+          
+          dog.y = getTerrainY(dog.x);
+          dog.bounceY = -Math.abs(Math.sin(dog.animTimer * 0.3)) * 3;
+
+          if (dog.animTimer % 6 === 0) {
+            dog.frame = (dog.frame + 1) % 4;
+            spawnParticle(dog.x + 12, dog.y + 12, -0.2, -0.1, PALETTE.GRASS_LIGHT, 10);
+          }
+
+          if (dog.x >= POOL_X - 6) {
+            dog.x = POOL_X - 6;
+            state = STATES.OBSERVE;
+            stateTimer = 0;
+            dog.bounceY = 0;
+          }
+          break;
+
+        case STATES.OBSERVE:
+          dog.tailWag++;
+          dog.y = getTerrainY(dog.x);
+          if (stateTimer > 25) {
+            triggerJump();
+          }
+          break;
+
+        case STATES.JUMP_IN:
+          dog.x += dog.vx;
+          dog.y += dog.vy;
+          dog.vy += 0.32;
+
+          if (dog.y >= BOARD_Y - 9) {
+            dog.y = BOARD_Y - 9;
+            dog.vx = 0;
+            dog.vy = 0;
+            state = STATES.CREEPING;
+            stateTimer = 0;
+            screenShake = 3;
+
+            spawnPoolSplash(BOARD_X + 4, BOARD_Y + 2);
+            triggerDuckHop();
+          }
+          break;
+
+        case STATES.CREEPING:
+          dog.x += 0.12;
+          dog.animTimer++;
+          springCompress = Math.sin(stateTimer * 0.15) * 1.2 + 1.0;
+
+          if (dog.x >= BOARD_X + 4) {
+            dog.x = BOARD_X + 4;
+            state = STATES.POUNCE_PREP;
+            stateTimer = 0;
+          }
+          break;
+
+        case STATES.POUNCE_PREP:
+          // ~4 SECONDS OF TENSION: High rump, lowered snout watching ducks
+          dog.tailWag += 3; // Rapid tail wiggling
+          dog.wobble = (Math.random() - 0.5) * 0.6; // Tremor/vibration
+          springCompress = 2.5 + Math.sin(stateTimer * 0.08) * 1.0; // Flexed board
+
+          if (stateTimer > 240) { // 4 seconds @ 60fps
+            state = STATES.FLY_UP;
+            stateTimer = 0;
+            springCompress = 0;
+            dog.wobble = 0;
+            dog.vx = 0.2;
+            dog.vy = -1.85; // Slow floaty launch upward
+            screenShake = 4;
+            spawnPoolSplash(BOARD_X + 8, BOARD_Y + 2);
+          }
+          break;
+
+        case STATES.FLY_UP:
+          dog.x += dog.vx;
+          dog.y += dog.vy;
+          dog.vy -= 0.002; // Extended slow float up into sky
+
+          if (stateTimer % 8 === 0) {
+            dog.flipFrame = (dog.flipFrame + 1) % 4; // Continuous 360 rotation
+          }
+
+          if (stateTimer % 3 === 0) {
+            spawnParticle(dog.x + 8, dog.y + 16, -0.1, 0.4, PALETTE.CLOUD_WHITE, 18);
+          }
+
+          if (dog.y < -45) {
+            state = STATES.RESET;
+            stateTimer = 0;
+          }
+          break;
+
+        case STATES.RESET:
+          if (stateTimer > 25) {
+            resetScene();
+          }
+          break;
+      }
+
+      // Ducks Hop & Float Logic
+      ducks.forEach(d => {
+        if (d.hopVy !== 0 || d.hopY < 0) {
+          d.hopY += d.hopVy;
+          d.hopVy += 0.2;
+          if (d.hopY >= 0) {
+            d.hopY = 0;
+            d.hopVy = 0;
+          }
+        }
+        d.y = (POOL_Y + 10) + d.hopY + Math.sin(stateTimer * 0.06 + d.bobOffset) * 0.8;
+      });
+
+      // Update particles
+      for (let p of particles) {
+        if (p.active) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life--;
+          if (p.life <= 0) p.active = false;
+        }
+      }
+
+      if (screenShake > 0) screenShake *= 0.8;
+      if (screenShake < 0.1) screenShake = 0;
+    }
+
+    // --- DRAWING HELPERS ---
+    function drawPixel(x, y, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(Math.floor(x), Math.floor(y), 1, 1);
+    }
+
+    function drawRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(w), Math.floor(h));
+    }
+
+    function renderBackground() {
+      // Clear Full Canvas Every Frame (Prevents Tail Artifacts)
+      drawRect(0, 0, LOGICAL_W, LOGICAL_H, PALETTE.SKY_TOP);
+
+      // Sky
+      drawRect(0, 40, 128, 18, PALETTE.SKY_BOT);
+      drawRect(105, 8, 12, 12, PALETTE.SUN);
+
+      // Palm Tree
+      drawRect(12, 28, 3, 30, PALETTE.PALM_TRUNK);
+      drawRect(3, 20, 20, 4, PALETTE.PALM_LEAF);
+      drawRect(6, 17, 14, 10, PALETTE.PALM_DARK);
+
+      // Uneven Grass Terrain
+      for (let x = 0; x < POOL_X; x++) {
+        let surfaceY = getTerrainY(x);
+        drawRect(x, surfaceY, 1, 96 - surfaceY, PALETTE.GRASS_LIGHT);
+        drawRect(x, surfaceY + 10, 1, 96 - surfaceY - 10, PALETTE.GRASS_DARK);
+      }
+    }
+
+    function renderPool() {
+      drawRect(POOL_X, POOL_Y, POOL_W, POOL_H, PALETTE.POOL_RIM);
+      drawRect(POOL_X + 2, POOL_Y + 2, POOL_W - 4, POOL_H - 4, PALETTE.POOL_INNER);
+      drawRect(POOL_X + 4, POOL_Y + 4, POOL_W - 8, POOL_H - 8, PALETTE.WATER_LIGHT);
+
+      drawRect(POOL_X + 12, POOL_Y + 12, 12, 1, PALETTE.WATER_DEEP);
+      drawRect(POOL_X + 32, POOL_Y + 18, 16, 1, PALETTE.WATER_DEEP);
+
+      // Springboard
+      const bY = BOARD_Y + Math.floor(springCompress);
+      drawRect(BOARD_X - 4, POOL_Y, 3, POOL_H - 6, PALETTE.BOARD_DARK);
+      drawRect(BOARD_X - 4, bY, 20, 3, PALETTE.BOARD_WOOD);
+      drawRect(BOARD_X - 4, bY + 3, 20, 1, PALETTE.BOARD_DARK);
+    }
+
+    function renderDucks() {
+      ducks.forEach(d => {
+        const dx = Math.floor(d.x);
+        const dy = Math.floor(d.y);
+
+        drawRect(dx, dy, 7, 4, PALETTE.DUCK_YELLOW);
+        drawRect(dx + 5, dy - 2, 3, 3, PALETTE.DUCK_YELLOW);
+        drawRect(dx + 8, dy - 1, 2, 1, PALETTE.DUCK_ORANGE);
+        drawPixel(dx + 6, dy - 1, '#000000');
+
+        if (d.hopY < 0) {
+          drawRect(dx + 2, dy - 3, 3, 2, PALETTE.DUCK_YELLOW);
+        }
+      });
+    }
+
+    // --- JACK RUSSELL SPRITE RENDERING ---
+    function renderDog() {
+      const dx = Math.floor(dog.x);
+      const dy = Math.floor(dog.y + dog.bounceY + dog.wobble);
+
+      if (state === STATES.APPROACH) {
+        drawRect(dx + 2, dy + 13, 15, 2, PALETTE.SHADOW);
+
+        drawRect(dx + 4, dy + 5, 12, 5, PALETTE.DOG_WHITE);
+        drawRect(dx + 6, dy + 5, 4, 4, PALETTE.DOG_BROWN);
+
+        const rumpOffset = (Math.floor(dog.animTimer / 3) % 2 === 0) ? -1 : 1;
+        drawRect(dx + 2, dy + 4 + rumpOffset, 3, 5, PALETTE.DOG_WHITE);
+
+        drawRect(dx - 1, dy + 1 + rumpOffset, 2, 4, PALETTE.DOG_WHITE);
+        drawPixel(dx - 1, dy + rumpOffset, PALETTE.DOG_BROWN);
+
+        drawRect(dx + 14, dy + 5, 1, 4, PALETTE.DOG_COLLAR);
+
+        drawRect(dx + 15, dy + 4, 5, 5, PALETTE.DOG_WHITE);
+        drawRect(dx + 16, dy + 2, 3, 2, PALETTE.DOG_BROWN);
+        drawRect(dx + 17, dy + 4, 3, 3, PALETTE.DOG_BROWN);
+        drawPixel(dx + 18, dy + 5, '#000');
+        drawRect(dx + 20, dy + 6, 3, 2, PALETTE.DOG_NOSE);
+
+        if (dog.frame % 2 === 0) {
+          drawRect(dx + 5, dy + 10, 2, 4, PALETTE.DOG_WHITE);
+          drawRect(dx + 12, dy + 10, 2, 4, PALETTE.DOG_WHITE);
+        } else {
+          drawRect(dx + 7, dy + 10, 2, 4, PALETTE.DOG_WHITE);
+          drawRect(dx + 10, dy + 10, 2, 4, PALETTE.DOG_WHITE);
+        }
+
+      } else if (state === STATES.OBSERVE) {
+        drawRect(dx, dy + 8, 16, 4, PALETTE.DOG_WHITE);
+        drawRect(dx + 4, dy + 8, 5, 3, PALETTE.DOG_BROWN);
+
+        drawRect(dx + 13, dy + 2, 5, 5, PALETTE.DOG_WHITE);
+        drawRect(dx + 13, dy, 3, 2, PALETTE.DOG_BROWN);
+        drawRect(dx + 15, dy + 2, 3, 3, PALETTE.DOG_BROWN);
+        drawPixel(dx + 16, dy + 3, '#000');
+        drawRect(dx + 18, dy + 4, 3, 2, PALETTE.DOG_NOSE);
+        drawRect(dx + 12, dy + 5, 1, 4, PALETTE.DOG_COLLAR);
+
+        const wag = (Math.floor(dog.tailWag / 4) % 2 === 0) ? 0 : -2;
+        drawRect(dx - 2, dy + 5 + wag, 3, 2, PALETTE.DOG_WHITE);
+
+      } else if (state === STATES.JUMP_IN) {
+        drawRect(dx, dy, 15, 6, PALETTE.DOG_WHITE);
+        drawRect(dx + 3, dy, 4, 4, PALETTE.DOG_BROWN);
+        drawRect(dx + 13, dy - 2, 5, 5, PALETTE.DOG_WHITE);
+        drawRect(dx + 14, dy - 3, 3, 2, PALETTE.DOG_BROWN);
+        drawRect(dx + 17, dy + 1, 2, 2, PALETTE.DOG_NOSE);
+
+        drawRect(dx - 2, dy + 4, 3, 2, PALETTE.DOG_WHITE);
+        drawRect(dx + 13, dy + 4, 3, 2, PALETTE.DOG_WHITE);
+
+      } else if (state === STATES.CREEPING) {
+        drawRect(dx, dy + 3, 15, 4, PALETTE.DOG_WHITE);
+        drawRect(dx + 4, dy + 3, 4, 3, PALETTE.DOG_BROWN);
+        drawRect(dx + 12, dy + 1, 5, 5, PALETTE.DOG_WHITE);
+        drawRect(dx + 13, dy - 1, 3, 2, PALETTE.DOG_BROWN);
+        drawRect(dx + 16, dy + 3, 2, 2, PALETTE.DOG_NOSE);
+
+        drawRect(dx - 1, dy + 7, 2, 2, PALETTE.DOG_WHITE);
+        drawRect(dx + 12, dy + 7, 2, 2, PALETTE.DOG_WHITE);
+
+      } else if (state === STATES.POUNCE_PREP) {
+        // HIGH RUMP / LOW HEAD POUNCE POSE
+        const curY = dy + Math.floor(springCompress);
+
+        // High Hips/Rump
+        drawRect(dx - 1, curY - 1, 5, 6, PALETTE.DOG_WHITE);
+        drawRect(dx + 1, curY - 1, 3, 3, PALETTE.DOG_BROWN);
+
+        // Rapid Wiggling Tail High in Air
+        const tailWiggle = (Math.floor(dog.tailWag / 2) % 2 === 0) ? -1 : 1;
+        drawRect(dx - 3 + tailWiggle, curY - 5, 2, 5, PALETTE.DOG_WHITE);
+        drawPixel(dx - 3 + tailWiggle, curY - 5, PALETTE.DOG_BROWN);
+
+        // Angled Body Slope down
+        drawRect(dx + 3, curY + 2, 8, 5, PALETTE.DOG_WHITE);
+
+        // Low Front Head Angle down watching ducks
+        drawRect(dx + 10, curY + 4, 5, 5, PALETTE.DOG_WHITE);
+        drawRect(dx + 10, curY + 2, 3, 2, PALETTE.DOG_BROWN); // Ear
+        drawRect(dx + 12, curY + 4, 3, 3, PALETTE.DOG_BROWN); // Patch
+        drawPixel(dx + 13, curY + 5, '#000');                 // Eye looking down
+        drawRect(dx + 14, curY + 7, 3, 2, PALETTE.DOG_NOSE);  // Snout down
+
+        // Paws
+        drawRect(dx, curY + 6, 2, 3, PALETTE.DOG_WHITE);
+        drawRect(dx + 10, curY + 7, 2, 2, PALETTE.DOG_WHITE);
+
+      } else if (state === STATES.FLY_UP) {
+        // CONTINUOUS 360-DEGREE SOMERSAULT FLIGHT
+        if (dog.flipFrame === 0) {
+          // Frame 1: Tucked launch
+          drawRect(dx + 4, dy + 5, 6, 10, PALETTE.DOG_WHITE);
+          drawRect(dx + 4, dy + 7, 4, 4, PALETTE.DOG_BROWN);
+          drawRect(dx + 3, dy - 1, 6, 5, PALETTE.DOG_WHITE);
+          drawRect(dx + 5, dy - 4, 3, 2, PALETTE.DOG_NOSE);
+          drawRect(dx + 6, dy + 15, 2, 4, PALETTE.DOG_WHITE);
+        } else if (dog.flipFrame === 1) {
+          // Frame 2: Horizontal Side Roll
+          drawRect(dx + 1, dy + 4, 12, 5, PALETTE.DOG_WHITE);
+          drawRect(dx + 4, dy + 4, 4, 3, PALETTE.DOG_BROWN);
+          drawRect(dx + 12, dy + 3, 4, 5, PALETTE.DOG_WHITE);
+          drawRect(dx + 15, dy + 5, 2, 2, PALETTE.DOG_NOSE);
+          drawRect(dx - 3, dy + 5, 4, 2, PALETTE.DOG_WHITE);
+        } else if (dog.flipFrame === 2) {
+          // Frame 3: Upside-Down Backflip
+          drawRect(dx + 4, dy + 2, 6, 10, PALETTE.DOG_WHITE);
+          drawRect(dx + 4, dy + 4, 4, 4, PALETTE.DOG_BROWN);
+          drawRect(dx + 3, dy + 11, 6, 5, PALETTE.DOG_WHITE);
+          drawRect(dx + 5, dy + 15, 3, 2, PALETTE.DOG_NOSE);
+          drawRect(dx + 6, dy - 3, 2, 5, PALETTE.DOG_WHITE);
+        } else {
+          // Frame 4: Splayed Rocket Ascent
+          drawRect(dx + 4, dy + 5, 6, 12, PALETTE.DOG_WHITE);
+          drawRect(dx + 4, dy + 7, 4, 5, PALETTE.DOG_BROWN);
+          drawRect(dx + 3, dy - 3, 7, 6, PALETTE.DOG_WHITE);
+          drawRect(dx + 5, dy - 6, 3, 2, PALETTE.DOG_NOSE);
+          drawRect(dx + 6, dy + 17, 2, 6, PALETTE.DOG_WHITE);
+          drawRect(dx - 3, dy + 1, 6, 2, PALETTE.DOG_WHITE);
+          drawRect(dx + 11, dy + 1, 6, 2, PALETTE.DOG_WHITE);
+        }
+      }
+    }
+
+    function renderParticles() {
+      for (let p of particles) {
+        if (p.active) {
+          drawPixel(p.x, p.y, p.color);
+        }
+      }
+    }
+
+    // --- MAIN RENDER LOOP ---
+    function render() {
+      ctx.save();
+
+      if (screenShake > 0) {
+        const sx = (Math.random() - 0.5) * screenShake;
+        const sy = (Math.random() - 0.5) * screenShake;
+        ctx.translate(Math.round(sx), Math.round(sy));
+      }
+
+      renderBackground();
+      renderPool();
+      renderDucks();
+      renderDog();
+      renderParticles();
+
+      if (state === STATES.RESET) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${stateTimer / 25})`;
+        ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+      }
+
+      ctx.restore();
+
+      displayCtx.clearRect(0, 0, display.width, display.height);
+      displayCtx.drawImage(
+        offscreen,
+        0, 0, LOGICAL_W, LOGICAL_H,
+        0, 0, display.width, display.height
+      );
+    }
+
+    function gameLoop() {
+      update();
+      render();
+      requestAnimationFrame(gameLoop);
+    }
+
+    resetScene();
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
