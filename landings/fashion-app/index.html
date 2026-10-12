@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Fashion app — концепт приложения по моде, созданный с помощью AI</title>
+    <meta name="description" content="Демонстрационный лендинг приложения по моде. Весь проект — от ТЗ до кода — создан с помощью AI.">
+    <meta property="og:title" content="Fashion app — концепт приложения по моде, созданный с помощью AI">
+    <meta property="og:description" content="Демонстрационный лендинг приложения по моде. Весь проект — от ТЗ до кода — создан с помощью AI.">
+    <meta property="og:image" content="https://www.mylook365.de/img/hero_image.jpeg">
+    <meta property="og:url" content="https://www.mylook365.de/">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"></noscript>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Вешалка для заголовка заставки на телефоне (рисуется в CSS, цвет — цвет кнопок) -->
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+        <symbol id="hanger" viewBox="0 0 200 44">
+            <path d="M100 28 V22 C100 15 108 14 108 8 C108 3 103 1 99 3"/>
+            <path d="M100 28 L8 42 M100 28 L192 42"/>
+        </symbol>
+    </svg>
+
+    <!-- Шапка с логотипом и переключателем вкладок -->
+    <header class="header" role="banner">
+        <div class="header__wrapper">
+            <button type="button" class="header__logo" id="logo-home">Fashion app</button>
+            <nav class="header__tabs" role="tablist">
+                <button class="header__tab" role="tab" aria-selected="true" data-tab="for-me" data-i18n="tab.for-me">
+                    Для меня
+                </button>
+                <button class="header__tab" role="tab" aria-selected="false" data-tab="for-brands" data-i18n="tab.for-brands">
+                    Для брендов
+                </button>
+                <button class="header__tab" role="tab" aria-selected="false" data-tab="about-us" data-i18n="tab.about-us">
+                    О нас
+                </button>
+            </nav>
+            <div class="header__lang">
+                <button class="lang-btn lang-btn--active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Верхнее меню для "Для меня" (5 пунктов) -->
+    <nav class="menu menu--for-me" aria-label="Меню для покупателей" data-i18n-aria-label="menu.aria-me">
+        <div class="menu__wrapper">
+            <a class="menu__item" href="#wardrobe" data-i18n="menu.wardrobe">Гардероб</a>
+            <a class="menu__item" href="#collections" data-i18n="menu.collections">Подборки товаров</a>
+            <a class="menu__item" href="#looks" data-i18n="menu.looks">Looks</a>
+            <a class="menu__item" href="#brands" data-i18n="menu.brands">Бренды</a>
+            <a class="menu__item" href="#try-on" data-i18n="menu.try-on">Примерка</a>
+        </div>
+    </nav>
+
+    <!-- Верхнее меню для "Для брендов" -->
+    <nav class="menu menu--for-brands" aria-label="Меню для брендов" data-i18n-aria-label="menu.aria-brands" hidden>
+        <div class="menu__wrapper">
+            <a class="menu__item" href="#value-prop" data-i18n="menu.value-prop">Ценностное предложение</a>
+            <a class="menu__item" href="#conditions" data-i18n="menu.conditions">Условия</a>
+            <a class="menu__item" href="#join" data-i18n="menu.join">Присоединиться</a>
+        </div>
+    </nav>
+
+
+    <!-- Основной контент -->
+    <main id="main">
+        <!-- Вкладка "Для меня" -->
+        <section id="for-me" class="tab-content tab-content--active">
+            <!-- Заставка -->
+            <section class="hero">
+                <img class="hero__image"
+                     src="img/hero_image.jpeg"
+                     alt="[ТЕКСТ: описание фото для alt]"
+                     width="1024"
+                     height="559"
+                     fetchpriority="high">
+                <svg class="hero__hanger" aria-hidden="true" focusable="false" viewBox="0 0 200 44"><use href="#hanger"/></svg>
+                <h1 data-i18n="hero.title"><span class="hero__mark">Полный шкаф, но нечего надеть?<br>- Реши эту проблему раз и навсегда</span></h1>
+                <button class="hero__cta button button--primary" data-action="waitlist" data-i18n="cta.waitlist">
+                    Записаться в лист ожидания
+                </button>
+            </section>
+
+            <!-- Сетка функций -->
+            <section class="functions-grid">
+                <div class="function-card" data-modal="wardrobe">
+                    <div class="function-card__icon">
+                        <!-- Открытый гардероб: створки, перекладина, вешалки -->
+                        <svg class="icon-wardrobe" aria-hidden="true" focusable="false" viewBox="0 0 48 48" width="48" height="48">
+                            <rect x="8" y="4" width="32" height="40" rx="2"/>
+                            <path d="M8 4 L2 8 V40 L8 44 M40 4 L46 8 V40 L40 44"/>
+                            <path d="M12 12 H36 M8 34 H40"/>
+                            <path class="icon-wardrobe__hanger" d="M17 12 V14 M12 23 L17 14 L22 23 Z M31 12 V14 M26 23 L31 14 L36 23 Z"/>
+                        </svg>
+                    </div>
+                    <h2 class="function-card__title" data-i18n="card.wardrobe-title">Гардероб</h2>
+                    <p class="function-card__desc" data-i18n="card.wardrobe-desc">Соберите свой гардероб в приложении и получайте образы из того, что уже есть.</p>
+                </div>
+                <div class="function-card" data-modal="collections">
+                    <div class="function-card__icon">📋</div>
+                    <h2 class="function-card__title" data-i18n="card.collections-title">Подборки товаров</h2>
+                    <p class="function-card__desc" data-i18n="card.collections-desc">Разные варианты одной вещи — чтобы сравнить и выбрать.</p>
+                </div>
+                <div class="function-card" data-modal="looks">
+                    <div class="function-card__icon">👗</div>
+                    <h2 class="function-card__title" data-i18n="card.looks-title">Looks</h2>
+                    <p class="function-card__desc" data-i18n="card.looks-desc">Готовые образы из нескольких вещей.</p>
+                </div>
+                <div class="function-card" data-modal="brands">
+                    <div class="function-card__icon">🏷️</div>
+                    <h2 class="function-card__title" data-i18n="card.brands-title">Бренды</h2>
+                    <p class="function-card__desc" data-i18n="card.brands-desc">Твои любимые бренды в одном приложении.</p>
+                    <span class="function-card__badge" data-i18n="card.brands-badge">Обновляется</span>
+                </div>
+                <div class="function-card" data-modal="try-on">
+                    <div class="function-card__icon">🪞</div>
+                    <h2 class="function-card__title" data-i18n="card.tryon-title">Примерка</h2>
+                    <p class="function-card__desc" data-i18n="card.tryon-desc">Посмотрите, как вещь может выглядеть на вас.</p>
+                    <span class="function-card__badge" data-i18n="card.tryon-badge">Скоро</span>
+                </div>
+            </section>
+
+            <!-- CTA: лист ожидания (точка 2) -->
+            <section class="cta-section" style="text-align: center; padding: 48px 16px; background-color: #F9F9F9; margin: 48px 0;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="cta.heading">Запишитесь, чтобы получить доступ первыми</h2>
+                <button class="button button--primary" data-action="waitlist" style="cursor: pointer;" data-i18n="cta.waitlist-go">Перейти на лист ожидания</button>
+            </section>
+
+            <!-- Витрина товаров -->
+            <section class="product-showcase" style="max-width: 1200px; margin: 48px auto; padding: 0 16px;">
+                <h2 style="font-size: 28px; margin-bottom: 8px;" data-i18n="products.title">Популярные товары</h2>
+                <p style="font-size: 14px; color: #999; margin-bottom: 32px;" data-i18n="products.note">Раздел обновляется</p>
+
+                <div class="products-grid" id="products-grid">
+                    <!-- Карточки товаров будут вставлены здесь через JS -->
+                </div>
+            </section>
+
+            <!-- CTA: лист ожидания (точка 3 на "Для меня") -->
+            <section class="cta-section" style="text-align: center; padding: 48px 16px; background-color: #F9F9F9; margin: 48px 0;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="cta.heading">Запишитесь, чтобы получить доступ первыми</h2>
+                <button class="button button--primary" data-action="waitlist" style="cursor: pointer;" data-i18n="cta.waitlist">Записаться в лист ожидания</button>
+            </section>
+        </section>
+
+        <!-- Вкладка "Для брендов" -->
+        <section id="for-brands" class="tab-content" hidden>
+            <!-- Заставка -->
+            <section class="hero">
+                <img class="hero__image"
+                     src="img/hero_image.jpeg"
+                     alt="[ТЕКСТ: описание фото для alt]"
+                     width="1024"
+                     height="559"
+                     fetchpriority="high">
+                <svg class="hero__hanger" aria-hidden="true" focusable="false" viewBox="0 0 200 44"><use href="#hanger"/></svg>
+                <h1 data-i18n="hero.title"><span class="hero__mark">Полный шкаф, но нечего надеть?<br>- Реши эту проблему раз и навсегда</span></h1>
+                <button class="hero__cta button button--primary" data-action="scroll-to-join" data-i18n="cta.join">
+                    Присоединиться
+                </button>
+            </section>
+
+            <!-- Сетка карточек "Для брендов" -->
+            <section class="functions-grid functions-grid--brands">
+                <div class="function-card" style="cursor: pointer;" onclick="document.getElementById('value-prop').scrollIntoView({behavior: 'smooth'})">
+                    <div class="function-card__icon">🎯</div>
+                    <h2 class="function-card__title" data-i18n="menu.value-prop">Ценностное предложение</h2>
+                    <p class="function-card__desc" data-i18n="brandcard.value-desc">Покупатели, которые ищут именно вас.</p>
+                </div>
+                <div class="function-card" style="cursor: pointer;" onclick="document.getElementById('conditions').scrollIntoView({behavior: 'smooth'})">
+                    <div class="function-card__icon">📋</div>
+                    <h2 class="function-card__title" data-i18n="menu.conditions">Условия</h2>
+                    <p class="function-card__desc" data-i18n="brandcard.cond-desc">Оплата за результат, а не за показы.</p>
+                </div>
+                <div class="function-card" style="cursor: pointer;" onclick="document.getElementById('join').scrollIntoView({behavior: 'smooth'})">
+                    <div class="function-card__icon">📝</div>
+                    <h2 class="function-card__title" data-i18n="menu.join">Присоединиться</h2>
+                    <p class="function-card__desc" data-i18n="brandcard.join-desc">Оставьте заявку — мы свяжемся с вами.</p>
+                </div>
+            </section>
+
+            <!-- CTA: присоединиться (точка 2) -->
+            <section class="cta-section" style="text-align: center; padding: 48px 16px; background-color: #F9F9F9; margin: 48px 0;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="brands.cta">Готовы к сотрудничеству?</h2>
+                <button class="button button--primary" data-action="scroll-to-join" style="cursor: pointer;" data-i18n="cta.join">Присоединиться</button>
+            </section>
+
+            <!-- Блок "Ценностное предложение" -->
+            <section id="value-prop" style="max-width: 1200px; margin: 48px auto; padding: 0 16px; scroll-margin-top: 80px;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="brands.value-title">Покупатели, которые ищут именно вас</h2>
+                <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;" data-i18n="brands.value-intro">Fashion app помогает женщинам 20–35 лет находить одежду модных брендов по поводу, сезону и стилю — в том числе с помощью гардероба в приложении.</p>
+
+                <ul style="list-style: none; padding: 0; margin-bottom: 32px;">
+                    <li style="margin-bottom: 16px;" data-i18n="val.1">
+                        <strong>Целевой трафик.</strong> Покупательница переходит в ваш магазин, уже выбрав конкретную вещь.
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="val.2">
+                        <strong>Ваши товары в образах и подборках.</strong> Вещи бренда показываются не только в каталоге, но и в готовых образах и тематических подборках.
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="val.3">
+                        <strong>Витрина модных брендов.</strong> Ваш бренд — в едином каталоге рядом с другими модными брендами.
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="val.4">
+                        <strong>Оплата за результат.</strong> Вы платите за продажи, а не за показы.
+                    </li>
+                </ul>
+
+                <button class="button button--primary" style="cursor: pointer;" onclick="document.getElementById('join').scrollIntoView({behavior: 'smooth'})" data-i18n="cta.join">Присоединиться</button>
+            </section>
+
+            <!-- Блок "Условия" -->
+            <section id="conditions" style="max-width: 1200px; margin: 48px auto; padding: 0 16px; scroll-margin-top: 80px;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="brands.cond-title">Условия партнёрства</h2>
+
+                <ul style="list-style: none; padding: 0; margin-bottom: 32px;">
+                    <li style="margin-bottom: 16px;" data-i18n="cond.1">
+                        <strong>Модель оплаты:</strong> комиссия [X] % с продаж, совершённых по переходу из Fashion app.
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="cond.2">
+                        <strong>Срок учёта перехода (cookie-окно):</strong> [N] дней.
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="cond.3">
+                        <strong>Подключение:</strong> [ТЕКСТ: условия подключения — стоимость, сроки].
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="cond.4">
+                        <strong>Каталог:</strong> товарный фид с изображениями, ценами, наличием и атрибутами. Формат фида — [указать].
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="cond.5">
+                        <strong>Права на изображения:</strong> бренд предоставляет право использовать фото товаров в каталоге, образах, подборках и в функции виртуальной примерки.
+                    </li>
+                    <li style="margin-bottom: 16px;" data-i18n="cond.6">
+                        <strong>Продвижение (опционально):</strong> платное размещение в приоритетных позициях; такие карточки маркируются как реклама.
+                    </li>
+                </ul>
+
+                <button class="button button--primary" style="cursor: pointer;" onclick="document.getElementById('join').scrollIntoView({behavior: 'smooth'})" data-i18n="cta.join">Присоединиться</button>
+            </section>
+
+            <!-- Форма "Присоединиться" -->
+            <section id="join" style="max-width: 1200px; margin: 48px auto; padding: 0 16px; scroll-margin-top: 80px;">
+                <h2 style="font-size: 28px; margin-bottom: 32px;" data-i18n="brands.join-title">Оставить заявку</h2>
+
+                <form style="max-width: 600px;">
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;" data-i18n="form.name">Имя</label>
+                        <input type="text" placeholder="Ваше имя" data-i18n-placeholder="form.name-ph" style="width: 100%; padding: 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;" data-i18n="form.brand">Название бренда</label>
+                        <input type="text" placeholder="Название вашего бренда" data-i18n-placeholder="form.brand-ph" style="width: 100%; padding: 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;" data-i18n="form.contact">Контактное лицо</label>
+                        <input type="text" placeholder="Ваше имя" data-i18n-placeholder="form.name-ph" style="width: 100%; padding: 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Email</label>
+                        <input type="email" placeholder="your@email.com" style="width: 100%; padding: 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;" data-i18n="form.site">Сайт / магазин</label>
+                        <input type="url" placeholder="https://yoursite.com" style="width: 100%; padding: 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 16px; box-sizing: border-box;">
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 14px;">
+                            <input type="checkbox" style="margin-top: 2px;" required>
+                            <span data-i18n="form.consent">Я согласен (согласна) на обработку моих персональных данных</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="button button--primary" style="cursor: pointer; width: 100%;" data-i18n="form.submit-brand">Отправить заявку</button>
+                </form>
+            </section>
+        </section>
+
+        <!-- Вкладка "О нас" -->
+        <section id="about-us" class="tab-content" hidden>
+            <!-- Заставка -->
+            <section class="hero">
+                <img class="hero__image"
+                     src="img/hero_image.jpeg"
+                     alt="[ТЕКСТ: описание фото для alt]"
+                     width="1024"
+                     height="559"
+                     fetchpriority="high">
+                <svg class="hero__hanger" aria-hidden="true" focusable="false" viewBox="0 0 200 44"><use href="#hanger"/></svg>
+                <h1 data-i18n="hero.title"><span class="hero__mark">Полный шкаф, но нечего надеть?<br>- Реши эту проблему раз и навсегда</span></h1>
+                <button class="hero__cta button button--primary" data-action="waitlist" data-i18n="cta.waitlist">Записаться в лист ожидания</button>
+            </section>
+
+            <!-- Контент «О нас» -->
+            <section style="max-width: 1200px; margin: 48px auto; padding: 0 16px;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="tab.about-us">О нас</h2>
+                <p style="font-size: 16px; line-height: 1.6; max-width: 720px;" data-i18n="about.desc">Эта страница — портфолио-прототип. Его автор — Тамара Воробьёва, проектный менеджер. Задача: из неформального брифа собрать техническое задание и работающий прототип, управляя ИИ как инструментом разработки.</p>
+            </section>
+        </section>
+
+        <!-- Вкладка "Мобильное приложение" -->
+        <section id="mobile-app" class="tab-content" hidden>
+            <!-- Заставка -->
+            <section class="hero">
+                <img class="hero__image"
+                     src="img/hero_image.jpeg"
+                     alt="[ТЕКСТ: описание фото для alt]"
+                     width="1024"
+                     height="559"
+                     fetchpriority="high">
+                <svg class="hero__hanger" aria-hidden="true" focusable="false" viewBox="0 0 200 44"><use href="#hanger"/></svg>
+                <h1 data-i18n="hero.title"><span class="hero__mark">Полный шкаф, но нечего надеть?<br>- Реши эту проблему раз и навсегда</span></h1>
+                <button class="hero__cta button button--primary" data-action="waitlist" data-i18n="cta.waitlist">Записаться в лист ожидания</button>
+            </section>
+
+            <!-- Контент Мобильного приложения -->
+            <section style="max-width: 1200px; margin: 48px auto; padding: 0 16px;">
+                <h2 style="font-size: 28px; margin-bottom: 24px;" data-i18n="tab.mobile-app">Мобильное приложение</h2>
+                <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;" data-i18n="app.desc">
+                    Скачайте наше мобильное приложение Fashion app и получайте подборки одежды, готовые образы и рекомендации ИИ-стилиста в любое время. Приложение доступно для iOS и Android.
+                </p>
+                <button class="button button--primary" data-action="waitlist" style="cursor: pointer;" data-i18n="cta.waitlist">Записаться в лист ожидания</button>
+            </section>
+        </section>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="footer__wrapper">
+            <section class="footer__section">
+                <h3><a href="#" id="footer-about" style="color: inherit; text-decoration: none; cursor: pointer;" data-i18n="footer.about">О нас</a></h3>
+                <h3><a href="#" id="footer-app" style="color: inherit; text-decoration: none; cursor: pointer;" data-i18n="tab.mobile-app">Мобильное приложение</a></h3>
+            </section>
+
+            <section class="footer__section">
+                <h3 data-i18n="footer.social">Соцсети</h3>
+                <div style="display: flex; gap: 16px;">
+                    <a href="https://t.me" target="_blank" style="display: inline-block;">
+                        <img src="img/telegram-logo-sm.png" alt="Telegram" width="40" height="40" style="width: 40px; height: 40px;">
+                    </a>
+                    <a href="https://instagram.com" target="_blank" style="display: inline-block;">
+                        <img src="img/instagram-logo-sm.png" alt="Instagram" width="40" height="40" style="width: 40px; height: 40px;">
+                    </a>
+                </div>
+            </section>
+
+            <section class="footer__section">
+                <h3 data-i18n="footer.newsletter">Рассылка</h3>
+                <form id="newsletter-form" style="display: flex; flex-direction: column; gap: 8px;">
+                    <input type="text" placeholder="Ваше имя" data-i18n-placeholder="form.name-ph" required style="padding: 8px 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 14px;">
+                    <input type="email" placeholder="Ваш email" data-i18n-placeholder="form.email-ph" required style="padding: 8px 12px; border: 1px solid #E8E8E8; border-radius: 8px; font-size: 14px;">
+                    <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 12px;">
+                        <input type="checkbox" required style="margin-top: 2px;">
+                        <span data-i18n="footer.newsletter-consent">Я согласен (согласна) получать новостную рассылку</span>
+                    </label>
+                    <button type="submit" class="button button--primary" style="cursor: pointer; align-self: flex-start;" data-i18n="footer.subscribe">Подписаться</button>
+                </form>
+            </section>
+
+            <section class="footer__section footer__cta">
+                <!-- CTA: зарезервировано -->
+            </section>
+
+            <section class="footer__legal">
+                <p>&copy; <span id="year"></span> fashion app</p>
+                <p class="footer__disclaimer" data-i18n="footer.disclaimer">Демонстрационный концепт: данные вымышленные, названия и логотипы брендов принадлежат их владельцам.</p>
+                <p class="footer__disclaimer" data-i18n="footer.author">Автор: Тамара Воробьёва</p>
+                <ul class="footer__list footer__legal-links">
+                    <li><a href="[ССЫЛКА: политика конфиденциальности]" data-i18n="footer.privacy">Политика конфиденциальности</a></li>
+                    <li><a href="[ССЫЛКА: пользовательское соглашение]" data-i18n="footer.terms">Пользовательское соглашение</a></li>
+                </ul>
+            </section>
+        </div>
+    </footer>
+
+    <!-- Модальное окно (универсальный компонент) -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true" hidden style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: flex; align-items: center; justify-content: center; overflow-y: auto; overscroll-behavior: contain;">
+        <div class="modal__backdrop" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+        <div class="modal__content" style="position: relative; background-color: #FFF; border-radius: 12px; max-width: 90vw; max-height: 90vh; width: 100%; margin: 24px; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); z-index: 1000;">
+            <button class="modal__close" aria-label="Закрыть окно" data-i18n-aria-label="modal.close" data-close style="position: sticky; top: 0; right: 0; background-color: #FFF; border: none; padding: 16px; font-size: 24px; cursor: pointer; border-radius: 0 12px 0 0;">✕</button>
+            <div class="modal__inner" id="modal-inner" style="padding: 48px 24px;">
+                <!-- Содержимое будет вставлено сюда через JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie-баннер -->
+    <div class="cookie-banner" id="cookie-banner" role="dialog" aria-labelledby="cookie-title">
+        <div class="cookie-banner__content">
+            <h2 id="cookie-title" style="font-size: 16px; margin-bottom: 12px; font-weight: 600;" data-i18n="cookie.title">Мы используем cookies</h2>
+            <div class="cookie-banner__buttons">
+                <button class="cookie-banner__btn cookie-banner__btn--secondary" id="cookie-necessary" data-i18n="cookie.necessary">Только необходимые</button>
+                <button class="cookie-banner__btn cookie-banner__btn--primary" id="cookie-accept" data-i18n="cookie.accept">Принять все</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast-уведомления -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

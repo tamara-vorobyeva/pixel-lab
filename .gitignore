@@ -1,0 +1,38 @@
+# Зависимости
+node_modules/
+
+# Сборка и кэш
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.svelte-kit/
+.vite/
+.parcel-cache/
+.cache/
+.turbo/
+.vercel/
+.netlify/
+coverage/
+*.tsbuildinfo
+.eslintcache
+
+# Секреты и переменные окружения (ОБЯЗАТЕЛЬНО К ИСКЛЮЧЕНИЮ)
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+*.p8
+*.mobileprovision
+service-account*.json
+
+# AI-ассистенты
+.claude/
+# CLAUDE.md  ← раскомментируйте, если не хотите публиковать инструкции для Claude
+
+# Настройки

@@ -1,0 +1,1067 @@
+/* Переменные и базовые стили */
+:root {
+  /* Цвета — раздел 10.1 ТЗ */
+  --color-primary: #C24B7F;
+  --color-primary-hover: #B33C6F;
+  --color-primary-light: #CA628F;
+  --color-secondary: #B5CEDF;
+  --color-accent: #F2AB46;
+  --color-text: #143F59;
+  --color-bg: #FFFFFF;
+
+  /* Дополнительные цвета */
+  --color-error: #B71C1C;
+  --color-border: #E8E8E8;
+  --color-footer-bg: #F9F9F9;
+  --color-disabled: #E8E8E8;
+
+  /* Типографика */
+  --font-family: Manrope, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-size-base: 16px;
+  --font-size-small: 14px;
+  --font-size-h1: 36px;
+  --font-size-h2: 28px;
+  --font-size-h3: 20px;
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Отступы (шкала: 4/8/16/24/32/48) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Размеры контейнеров */
+  --container-width: 1200px;
+  --container-padding: 16px;
+  --header-height: 64px;
+
+  /* Скругления */
+  --border-radius: 12px;
+
+  /* Анимации */
+  --transition-duration: 200ms;
+
+  /* Слои z-index */
+  --z-header: 100;
+  --z-modal: 1000;
+  --z-toast: 2000;
+
+  /* Брейкпоинты (справочные, в @media писать числами) */
+  --bp-tablet: 768px;
+  --bp-desktop: 1200px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* На время: светлая тема везде */
+  }
+}
+
+/* Базовые стили */
+html {
+  scrollbar-gutter: stable;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: opacity var(--transition-duration) ease-out;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+a:focus-visible,
+button:not(.button--primary):not(.cookie-banner__btn--primary):not(.lang-btn--active):not(.header__tab):focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+button {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+h1, h2, h3 {
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+
+/* Утилиты */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Шапка */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  min-height: var(--header-height);
+  padding: var(--spacing-sm) 0;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+}
+
+.header__wrapper {
+  width: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm) var(--spacing-lg);
+}
+
+.header__logo {
+  font-family: inherit;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  white-space: nowrap;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.header__logo:hover {
+  color: var(--color-primary);
+}
+
+.header__logo:active {
+  color: var(--color-primary-hover);
+}
+
+.header__logo:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.header__lang {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+}
+
+.header__tabs {
+  order: 3;
+  width: 100%;
+  display: flex;
+  gap: var(--spacing-sm);
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.header__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.header__tab {
+  white-space: nowrap;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  border-radius: var(--border-radius);
+  transition: background-color var(--transition-duration) ease-out,
+              color var(--transition-duration) ease-out;
+  cursor: pointer;
+}
+
+.header__tab:hover {
+  background-color: var(--color-secondary);
+}
+
+.header__tab[aria-selected="true"] {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.header__tab:focus-visible {
+  outline: none;
+}
+
+/* Верхнее меню */
+.menu {
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.menu::-webkit-scrollbar {
+  display: none;
+}
+
+.menu__wrapper {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--container-padding);
+  min-width: min-content;
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+.menu__item {
+  white-space: nowrap;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius);
+  transition: opacity var(--transition-duration) ease-out,
+              color var(--transition-duration) ease-out;
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+/* При наведении, нажатии и фокусе буквы становятся тёмно-синими, рамки нет. */
+.menu__item:hover,
+.menu__item:active,
+.menu__item[aria-current],
+.menu__item:focus-visible {
+  opacity: 1;
+  color: var(--color-text);
+  outline: none;
+}
+
+/* Основной контент */
+main {
+  min-height: calc(100vh - var(--header-height) - 200px);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content--active {
+  display: block;
+}
+
+/* Заставка */
+/* На телефоне заголовок стоит над фото, кнопка под фото: ничто не закрывает снимок. */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-md);
+}
+
+.hero__image {
+  order: 1;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  aspect-ratio: 1024 / 559;
+}
+
+.hero__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+}
+
+.hero__title {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-h2);
+  margin-bottom: var(--spacing-lg);
+  display: inline-block;
+}
+
+.hero__cta {
+  order: 2;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+}
+
+/* Кнопки */
+.button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  font-weight: var(--font-weight-semibold);
+  transition: background-color var(--transition-duration) ease-out,
+              color var(--transition-duration) ease-out;
+  cursor: pointer;
+  border: none;
+}
+
+.button--primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.button--primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* У розовых кнопок рамки фокуса нет — решение заказчика. */
+.button--primary:focus-visible,
+.cookie-banner__btn--primary:focus-visible,
+.lang-btn--active:focus-visible {
+  outline: none;
+}
+
+.button--primary:disabled,
+.button--primary[aria-busy="true"] {
+  background-color: var(--color-disabled);
+  color: #999999;
+  cursor: not-allowed;
+}
+
+/* Сетка функций */
+.functions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  max-width: var(--container-width);
+  margin: var(--spacing-2xl) auto;
+  padding: 0 var(--container-padding);
+}
+
+.function-card {
+  padding: var(--spacing-lg);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--transition-duration) ease-out,
+              box-shadow var(--transition-duration) ease-out;
+  position: relative;
+}
+
+.function-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.function-card:focus-within {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+.function-card__icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Иконка гардероба: линии цвета текста, вешалки — цвета кнопок. */
+.icon-wardrobe {
+  display: block;
+  margin: 0 auto;
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-wardrobe__hanger {
+  stroke: var(--color-primary);
+}
+
+.function-card__title {
+  font-size: var(--font-size-h3);
+  margin-bottom: var(--spacing-sm);
+}
+
+.function-card__desc {
+  font-size: var(--font-size-small);
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.function-card__badge {
+  display: inline-block;
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-md);
+}
+
+/* Модальное окно */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal[hidden] {
+  display: none !important;
+}
+
+.modal__backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-modal) - 1);
+}
+
+.modal__content {
+  position: relative;
+  background-color: var(--color-bg);
+  border-radius: var(--border-radius);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 100%;
+  margin: var(--spacing-lg);
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal__close {
+  position: sticky;
+  top: 0;
+  right: 0;
+  background-color: var(--color-bg);
+  border: none;
+  padding: var(--spacing-md);
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 0 var(--border-radius) 0 0;
+  transition: background-color var(--transition-duration) ease-out;
+  z-index: 1;
+}
+
+.modal__close:hover {
+  background-color: var(--color-footer-bg);
+}
+
+.modal__close:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: -2px;
+}
+
+.modal__inner {
+  padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+/* Витрина товаров */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+.product-card {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: transform var(--transition-duration) ease-out,
+              box-shadow var(--transition-duration) ease-out;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.product-card:focus-within {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+.product-card__image {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  background-color: #f0f0f0;
+}
+
+.product-card__content {
+  padding: var(--spacing-md);
+}
+
+.product-card__brand {
+  font-size: var(--font-size-small);
+  color: #999;
+  margin-bottom: var(--spacing-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.product-card__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.3;
+}
+
+.product-card__price {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.product-card__price-current {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.product-card__price-old {
+  font-size: var(--font-size-small);
+  color: #999;
+  text-decoration: line-through;
+}
+
+.product-card__link {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  transition: background-color var(--transition-duration) ease-out;
+}
+
+.product-card__link:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.product-card__link:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+.product-card__badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background-color: var(--color-accent);
+  color: var(--color-text);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.product-card__label {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #E8E8E8;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* CTA секция */
+.cta-section {
+  border-radius: var(--border-radius);
+}
+
+.cta-section h2 {
+  color: var(--color-text);
+}
+
+/* Подвал */
+.footer {
+  background-color: var(--color-footer-bg);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-xl) var(--container-padding);
+}
+
+.footer__wrapper {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+}
+
+.footer__section {
+  margin-bottom: 0;
+}
+
+.footer__section h3 {
+  font-size: var(--font-size-h3);
+  margin-bottom: var(--spacing-md);
+}
+
+.footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.footer__list li a {
+  display: inline-block;
+  padding: var(--spacing-xs) 0;
+}
+
+/* Место CTA скрыто, пока в нём нет кнопки; при добавлении кнопки убрать display: none. */
+.footer__cta {
+  display: none;
+  min-height: 60px;
+}
+
+.footer__legal {
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-small);
+}
+
+.footer__disclaimer {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-small);
+  color: var(--color-text);
+}
+
+.footer__legal-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+/* Toast-уведомления */
+.toast-container {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.toast {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 300ms ease-out forwards;
+  max-width: 300px;
+}
+
+.toast--success {
+  background-color: #4CAF50;
+}
+
+.toast--error {
+  background-color: var(--color-error);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Cookie-баннер */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-lg);
+  z-index: var(--z-toast);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.cookie-banner__content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cookie-banner__buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.cookie-banner__btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-duration) ease-out;
+}
+
+.cookie-banner__btn--primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.cookie-banner__btn--primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.cookie-banner__btn--secondary {
+  background-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.cookie-banner__btn--secondary:hover {
+  background-color: #D0D0D0;
+}
+
+/* Кнопки: состояния */
+.button:disabled {
+  background-color: var(--color-disabled);
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button[aria-busy="true"] {
+  opacity: 0.8;
+}
+
+/* Медиазапрос: планшет (768px и выше) */
+@media (min-width: 768px) {
+  .menu__wrapper {
+    gap: var(--spacing-lg);
+    justify-content: center;
+  }
+
+  .functions-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .footer__wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-2xl);
+  }
+
+  .footer__legal {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: var(--spacing-xl);
+    align-items: start;
+  }
+
+  /* Вывести юридические ссылки справа от текстов, в одну колонку. */
+  .footer__legal-links {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    margin-top: 0;
+  }
+}
+
+/* Медиазапрос: десктоп (1200px и выше) */
+@media (min-width: 1200px) {
+  /* Вкладки шапки в одну строку с логотипом: 4 вкладки не помещаются раньше. */
+  .header__wrapper {
+    flex-wrap: nowrap;
+  }
+
+  .header__tabs {
+    order: 0;
+    width: auto;
+    gap: var(--spacing-md);
+    overflow-x: visible;
+  }
+
+  .functions-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .footer__wrapper {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .footer__legal {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Заголовок заставки: на телефоне над фото, переносится по словам. */
+/* На телефоне заголовок — ярлык на вешалке: розовая этикетка со строчкой. */
+.hero h1 {
+  order: 0;
+  max-width: calc(100% - 2 * var(--container-padding));
+  margin: 0;
+  padding: 18px 18px;
+  background: var(--color-primary);
+  border-radius: var(--border-radius);
+  outline: 1.5px dashed var(--color-bg);
+  outline-offset: -7px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-bg);
+}
+
+/* Вешалка над ярлыком; цвет линий — цвет кнопок. */
+.hero__hanger {
+  order: -1;
+  display: block;
+  width: 200px;
+  height: 44px;
+  margin-bottom: -18px;
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Качание вешалки: точка опоры вверху, ярлык и вешалка качаются вместе. */
+@keyframes hanger-sway {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50% { transform: rotate(2.5deg); }
+}
+
+@keyframes hanger-sway-centered {
+  0%, 100% { transform: translateX(-50%) rotate(-1.5deg); }
+  50% { transform: translateX(-50%) rotate(1.5deg); }
+}
+
+.hero h1 {
+  transform-origin: 50% -26px;
+  animation: hanger-sway 4s ease-in-out infinite;
+}
+
+.hero__hanger {
+  transform-origin: 50% 0;
+  animation: hanger-sway 4s ease-in-out infinite;
+}
+
+/* Не двигать заголовок у тех, кто отключил анимацию в системе. */
+@media (prefers-reduced-motion: reduce) {
+  .hero h1,
+  .hero__hanger {
+    animation: none;
+  }
+}
+
+/* Широкий экран (от 1101 px): заголовок и кнопка поверх фото; фото показано целиком. */
+@media (min-width: 1101px) {
+  .hero {
+    display: block;
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    /* Размер вешалки и ярлыка растёт с шириной окна, чтобы не закрывать голову на фото. */
+    font-size: 0.9vw;
+  }
+
+  .hero__image {
+    height: 100%;
+  }
+
+  /* Ярлык на вешалке — тот же, что на телефоне, но поверх фото по центру. */
+  .hero h1 {
+    position: absolute;
+    top: 1.94em;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 50% -2.53em;
+    animation-name: hanger-sway-centered;
+    z-index: 10;
+    width: max-content;
+    white-space: nowrap;
+    font-size: 1em;
+    padding: 1.2em;
+    border-radius: 0.8em;
+    outline-offset: -0.47em;
+  }
+
+  .hero__hanger {
+    position: absolute;
+    top: -1.48em;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 50% 0;
+    animation-name: hanger-sway-centered;
+    z-index: 10;
+    width: 17.33em;
+    height: 3.81em;
+    margin: 0;
+    stroke-width: 3.5;
+    filter: drop-shadow(0 0 1px var(--color-bg)) drop-shadow(0 0 2px var(--color-bg));
+  }
+
+  .hero__cta {
+    position: absolute;
+    bottom: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+}
+
+/* Выделить строки заголовка заставки розовым блоком. */
+.hero__mark {
+  color: var(--color-bg);
+  padding: 0.1em 0.4em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Кнопки переключения языков */
+.lang-btn {
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-duration) ease-out;
+}
+
+.lang-btn:hover:not(.lang-btn--active) {
+  border-color: var(--color-primary);
+}
+
+.lang-btn--active {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.lang-btn--active:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+/* Сетка «Для брендов»: карточки одной ширины — одна колонка на телефоне, три от 768 px. */
+.functions-grid--brands {
+  grid-template-columns: 1fr;
+  margin-top: 80px;
+}
+
+@media (min-width: 768px) {
+  .functions-grid--brands {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Кнопки призыва к действию (CTA) пошире: лист ожидания и «Присоединиться». */
+.hero__cta,
+.button--primary[data-action="waitlist"],
+.button--primary[data-action="scroll-to-join"],
+.button--primary[data-i18n="cta.join"] {
+  min-width: min(320px, 100%);
+  padding-left: 48px;
+  padding-right: 48px;
+}
