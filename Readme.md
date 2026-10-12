@@ -9,10 +9,17 @@ Welcome to my personal web development sandbox. This repository contains my curr
 You can test and review my active projects instantly in your browser:
 
 ### 📱 Web Applications & Landings
-* 👗 **[Mylook — Dress with Intention](https://mylook365.de)** (Live Site)
-  * **What it is:** A sleek, interactive landing page for a digital wardrobe assistant. It introduces a concept where users can catalog clothes and play fashion rating games.
-  * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages.
-  * **Highlights:** Fully mobile-responsive layout deployed via Cloudflare CDN for lightning-fast loading speeds.
+* 👗 **[Mylook365]([https://mylook365.de](https://www.mylook365.de/)** (Live Site)
+  * **What it is:** A non-commercial portfolio project demonstrating modern AI-driven delivery management. The project showcases a workflow where a human owner drives the scope, decisions, and quality gates, while Claude drafts specifications and Claude Code operates as the engineering team.
+  * **The Brief:** A clickable landing-page prototype for an AI-stylist app targeting women aged 20–35 to discover outfits from Russian fashion brands. Designed to build a waitlist and attract partner brands ahead of a stakeholder review (no backend, fully mocked data).
+  * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages, Claude Code (AI Engineering).
+  * **My Role & Implementation:**
+    * **Product Governance:** Transformed the initial informal brief into a rigorous, versioned technical specification (v7.0 → v10.3), detailing user flows, edge cases, legal compliance, and 28 testable acceptance criteria.
+    * **Scope Management & Triage:** Acted as the gatekeeper against scope creep; triaged lead-engineer reviews, implementing critical demo fixes (modals layout, double-submit protection, scroll locks) while ruthlessly cutting non-essential features (Blog tab, header CTA).
+    * **Agentic Workflow Management:** Wrote a custom governance framework for the AI coding agent to enforce staged delivery, strict one-commit-per-stage rules, and zero-push permissions without manual approval.
+    * **Quality Assurance:** Handled all quality gates personally, rejecting builds that missed criteria (such as a broken RU/EN language switcher) and managing critical post-build changes (consent forms, layout adjustments).
+  * **Highlights:** Fully responsive layout built under rigorous engineering constraints, deployed via Cloudflare CDN for lightning-fast worldwide delivery.
+
 
 ### 🎮 Pixel-Games (experiments)
 You can play the live games directly in your browser:
