@@ -14,11 +14,11 @@ You can test and review my active projects instantly in your browser:
   * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages.
   * **Highlights:** Fully mobile-responsive layout deployed via Cloudflare CDN for lightning-fast loading speeds.
 
-### 🎮 Pixel-Games (Experiments)
+### 🎮 Pixel-Games (experiments)
 You can play the live games directly in your browser:
 
-* 🕹️ **[Dog-cat-game](www.dog-cat-game.pages.dev)** 
-* 🕹️ **[Dog-adventure-game](www.dog-adventure.pages.dev/)**
+* 🕹️ **[Dog-cat-game](https://dog-cat-game.pages.dev)** 
+* 🕹️ **[Dog-adventure-game](https://dog-adventure.pages.dev/)**
 
 
 ---
