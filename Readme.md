@@ -9,7 +9,7 @@ Welcome to my personal web development sandbox. This repository contains my curr
 You can test and review my active projects instantly in your browser:
 
 ### 📱 Web Applications & Landings
-* 👗 **[Mylook — Dress with Intention](https://mylook365.com)** (Live Site)
+* 👗 **[Mylook — Dress with Intention](https://mylook365.de)** (Live Site)
   * **What it is:** A sleek, interactive landing page for a digital wardrobe assistant. It introduces a concept where users can catalog clothes and play fashion rating games.
   * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages.
   * **Highlights:** Fully mobile-responsive layout deployed via Cloudflare CDN for lightning-fast loading speeds.
