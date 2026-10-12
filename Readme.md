@@ -5,10 +5,16 @@ A curated collection of my projects focused on web development, automation, and 
 ## 🚀 Live Demo (Launch Projects in Browser)
 
 You can test and review the live applications instantly without cloning the repository:
-* 🎮 **[Launch Interactive Games](https://github.io)**
-* 📱 **[View Responsive Landing Pages](https://github.io)**
-* 📐 **[Explore UI & Web Templates](https://github.io)**
-* 💡 **[Check Automation Examples](https://github.io)**
+* 📱 **[View Responsive Landing Pages]
+* [FashionApp](https://mylook365.de)**
+
+* 🎮 **[Launch Pixel Games]:
+* [Dog adventure](https://dog-adventure.pages.dev/)**
+* [Cat dog game](https://dog-cat-game.pages.dev/)**
+
+* 📐 **[Explore UI & Web Templates](in progress)**
+
+* 💡 **[Check Automation Examples](in progress)**
 
 ## 🛠️ Tech Stack & Tools
 * **Frontend:** HTML5, CSS3, JavaScript (ES6+)
