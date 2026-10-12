@@ -1,27 +1,39 @@
 # 🔬 pixel-lab
 
-A curated collection of my projects focused on web development, automation, and AI-assisted workflows. This repository contains functional prototypes, interactive web games, and responsive landing pages.
+Welcome to my personal web development sandbox. This repository contains my current live projects, focused on clean layout design, responsiveness, and interactive workflows.
 
-## 🚀 Live Demo (Launch Projects in Browser)
+---
 
-You can test and review the live applications instantly without cloning the repository:
-* 📱 **[View Responsive Landing Pages]
-* [FashionApp](https://mylook365.de)**
+## 🚀 Live Projects
 
-* 🎮 **[Launch Pixel Games]:
-* [Dog adventure](https://dog-adventure.pages.dev/)**
-* [Cat dog game](https://dog-cat-game.pages.dev/)**
+You can test and review my active projects instantly in your browser:
 
-* 📐 **[Explore UI & Web Templates](in progress)**
+### 📱 Web Applications & Landings
+* 👗 **[Mylook — Dress with Intention](https://mylook365.com)** (Live Site)
+  * **What it is:** A sleek, interactive landing page for a digital wardrobe assistant. It introduces a concept where users can catalog clothes and play fashion rating games.
+  * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages.
+  * **Highlights:** Fully mobile-responsive layout deployed via Cloudflare CDN for lightning-fast loading speeds.
 
-* 💡 **[Check Automation Examples](in progress)**
+### 🎮 Pixel-Games (Experiments)
+You can play the live games directly in your browser:
 
-## 🛠️ Tech Stack & Tools
-* **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-* **Tooling & Infrastructure:** Git, GitHub Pages, AI-assisted development (.claude)
+* 🕹️ **[Dog-cat-game](www.dog-cat-game.pages.dev)** 
+* 🕹️ **[Dog-adventure-game](www.dog-adventure.pages.dev/)**
+
+
+---
 
 ## 📁 Repository Structure
-* `/games` — Source code, assets, and logic for interactive web games.
-* `/landings` — Responsive layout, typography, and modern landing page designs.
-* `/templates` — Reusable UI components, boilerplates, and wireframes.
-* `/examples` — Script samples, automation concepts, and experimental code.
+
+* **`/landings/fashion-app`** — Source code for the Mylook landing page.
+* **`/games`** — Source files and assets for my browser mini-games.
+
+---
+
+## 🛠 Tech Stack
+
+* **Frontend:** Semantic HTML5, CSS3 (Flexbox/Grid), JavaScript (ES6)
+* **Hosting & Tools:** Git, Cloudflare Pages
+
+---
+*© 2026. Built with a focus on clean code and great mobile UX.*
