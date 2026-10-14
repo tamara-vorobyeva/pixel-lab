@@ -11,7 +11,7 @@ You can test and review my active projects instantly in your browser:
 ### 📱 Web Applications & Landings
 * 👗 **[Mylook365]([https://mylook365.de](https://www.mylook365.de/)** (Live Site)
   * **What it is:** A non-commercial portfolio project demonstrating modern AI-driven delivery management. The project showcases a workflow where a human owner drives the scope, decisions, and quality gates, while Claude drafts specifications and Claude Code operates as the engineering team.
-  * **The Brief:** A clickable landing-page prototype for an AI-stylist app targeting women aged 20–35 to discover outfits from Russian fashion brands. Designed to build a waitlist and attract partner brands ahead of a stakeholder review (no backend, fully mocked data).
+  * **The Brief:** A clickable landing-page prototype for an AI-stylist app targeting women aged 20–35 to discover outfits from fashion brands. Designed to build a waitlist and attract partner brands ahead of a stakeholder review (no backend, fully mocked data).
   * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages, Claude Code (AI Engineering).
   * **My Role & Implementation:**
     * **Product Governance:** Transformed the initial informal brief into a rigorous, versioned technical specification (v7.0 → v10.3), detailing user flows, edge cases, legal compliance, and 28 testable acceptance criteria.
