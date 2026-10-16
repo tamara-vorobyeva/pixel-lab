@@ -10,7 +10,7 @@ You can test and review my active projects instantly in your browser:
 
 
 ### Workflow automation for hackathon 
-* 👥 **[Teamfinder](automations/low-code-hackathon)** (Case study)
+* 👥 **[Teamfinder](automations/teamfinder-hackathon)** (Case study)
   * **What it is:** An independent low-code tool for team formation at the Ostrovok hackathon. I own the scope, decisions and quality gates; Claude drafts the specification, and Claude Code implements it.
   * **The Brief:** Help solo participants and teams find each other before team formation closes, with no backend or hosting and on a phone without VPN.
   * **Tech Stack:** Google Forms, Google Sheets, Google Apps Script, Node.js tests, Claude, Claude Code.
@@ -51,7 +51,6 @@ You can play the live games directly in your browser:
 ---
 
 ## 🛠 Tech Stack
-
 * **Frontend:** Semantic HTML5, CSS3 (Flexbox/Grid), JavaScript (ES6)
 * **Hosting & Tools:** Git, Cloudflare Pages
 
