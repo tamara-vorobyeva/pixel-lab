@@ -21,23 +21,23 @@
 * Соблюсти правила организатора: один капитан, не больше 5 человек, команды оформляются только в боте.
 
 
-![**Интерактивная Доска объявлений "Ищу команду / Ищем участника"** - тестовые данные](/img/screenshot-table-main-tab.png)
+![**Интерактивная Доска объявлений "Ищу команду / Ищем участника"** - тестовые данные](examples/google-tables-hackathon/img/screenshot-table-main-tab.png)
 
 
 **🔗 Ссылки - Решение**
 
 📢 **Ищу команду / Ищем участника**: https://docs.google.com/spreadsheets/d/1QEfY1mZuF5XimUPmM3alQqp0zMbUUANW2L6wslbcMG4/edit
 
-🙋**Форма «Ищу команду»**: 
+🙋Форма «Ищу команду»: 
 https://forms.gle/1CAdx52QiQKT7mEr9 · 
 
-🧑‍🤝‍🧑**Форма «Ищем участника»**: 
+🧑‍🤝‍🧑Форма «Ищем участника»: 
 https://forms.gle/o1VkWidEr4DAQd8T9 · 
 
-🔄 **Форма «Обновить статус»**: 
+🔄 Форма «Обновить статус»: 
 https://forms.gle/wirYApdQDiEuQaP76 · 
 
-🖥️**Таблица администратора (закрытая)**: https://docs.google.com/spreadsheets/d/1kM0UDc-ZQXc2_g2ad5OMYVZ9P-bPCQ4G3pbpEn-kA2o/edit
+🖥️Таблица администратора (закрытая): https://docs.google.com/spreadsheets/d/1kM0UDc-ZQXc2_g2ad5OMYVZ9P-bPCQ4G3pbpEn-kA2o/edit
 
 **🔗 Ссылки - Кейс**
 🛠 **[Кейс](case-study.ru.md)** – варианты архитектуры, ключевые решения, отклонённые варианты, реестр рисков, RACI и то, как велось ТЗ
