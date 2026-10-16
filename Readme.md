@@ -10,7 +10,7 @@ You can test and review my active projects instantly in your browser:
 
 
 ### Workflow automation for hackathon 
-* 👥 **[Teamfinder](<link to the public repository>)** (Case study)
+* 👥 **[Teamfinder](automations/low-code-hackathon)** (Case study)
   * **What it is:** An independent low-code tool for team formation at the Ostrovok hackathon. I own the scope, decisions and quality gates; Claude drafts the specification, and Claude Code implements it.
   * **The Brief:** Help solo participants and teams find each other before team formation closes, with no backend or hosting and on a phone without VPN.
   * **Tech Stack:** Google Forms, Google Sheets, Google Apps Script, Node.js tests, Claude, Claude Code.
@@ -23,15 +23,15 @@ You can test and review my active projects instantly in your browser:
 
 ### 📱 Web Applications & Landings
 * 👗 **[Mylook365]([https://mylook365.de](https://www.mylook365.de/)** (Live Site)
-  * **What it is:** A non-commercial portfolio project demonstrating modern AI-driven delivery management. The project showcases a workflow where a human owner drives the scope, decisions, and quality gates, while Claude drafts specifications and Claude Code operates as the engineering team.
-  * **The Brief:** A clickable landing-page prototype for an AI-stylist app targeting women aged 20–35 to discover outfits from fashion brands. Designed to build a waitlist and attract partner brands ahead of a stakeholder review (no backend, fully mocked data).
-  * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages, Claude Code (AI Engineering).
+  * **What it is:** A non-commercial portfolio project on AI-driven delivery management: I own the scope, decisions and quality gates; Claude drafts specifications, and Claude Code works as the engineering team.
+  * **The Brief:** A clickable landing-page prototype for an AI-stylist app that helps women aged 20–35 discover outfits from fashion brands. Built to collect a waitlist and attract partner brands ahead of a stakeholder review (no backend, mocked data).
+  * **Tech Stack:** HTML5, CSS3, JavaScript (ES6+), Cloudflare Pages, Claude Code.
   * **My Role & Implementation:**
-    * **Product Governance:** Transformed the initial informal brief into a rigorous, versioned technical specification (v7.0 → v10.3), detailing user flows, edge cases, legal compliance, and 28 testable acceptance criteria.
-    * **Scope Management & Triage:** Acted as the gatekeeper against scope creep; triaged lead-engineer reviews, implementing critical demo fixes (modals layout, double-submit protection, scroll locks) while ruthlessly cutting non-essential features (Blog tab, header CTA).
-    * **Agentic Workflow Management:** Wrote a custom governance framework for the AI coding agent to enforce staged delivery, strict one-commit-per-stage rules, and zero-push permissions without manual approval.
-    * **Quality Assurance:** Handled all quality gates personally, rejecting builds that missed criteria (such as a broken RU/EN language switcher) and managing critical post-build changes (consent forms, layout adjustments).
-  * **Highlights:** Fully responsive layout built under rigorous engineering constraints, deployed via Cloudflare CDN for lightning-fast worldwide delivery.
+    * **Product Governance:** Turned an informal brief into a versioned specification (v7.0 → v10.3) with user flows, edge cases, legal requirements and 28 testable acceptance criteria.
+    * **Scope Management & Triage:** Guarded against scope creep: triaged engineering reviews, approved critical demo fixes (modal layout, double-submit protection, scroll lock) and cut non-essential features (Blog tab, header CTA).
+    * **Agentic Workflow Management:** Wrote a governance framework for the AI coding agent: staged delivery, one commit per stage, no push without manual approval.
+    * **Quality Assurance:** Owned all quality gates, rejected builds that missed criteria (e.g. a broken RU/EN switcher) and managed post-build changes (consent forms, layout).
+  * **Highlights:** Fully responsive layout, deployed on Cloudflare's global CDN.
 
 
 ### 🎮 Pixel-Games (experiments)
@@ -44,7 +44,7 @@ You can play the live games directly in your browser:
 ---
 
 ## 📁 Repository Structure
-
+* **`/automations/teamfinder-hackathon`** — case study.
 * **`/landings/fashion-app`** — Source code for the Mylook landing page.
 * **`/games`** — Source files and assets for my browser mini-games.
 
