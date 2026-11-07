@@ -3,7 +3,14 @@
 Orientación académica y profesional en tecnología para chicas y mujeres jóvenes con discapacidad.
 Diseño basado en `Collage de pantallas_mockup_AdaptaTech.png`.
 
-**Demo pública:** https://adaptatech-2.pages.dev/
+Proyecto desarrollado por el equipo **InGENiosas**.
+
+## Enlaces
+
+- **Prototipo:** https://adaptatech-2.pages.dev/
+- **Ficha del proyecto:** https://drive.google.com/file/d/1hGpVcDF13a8eHikDzW1sRLLZg8gsVQbx/view?usp=drive_link
+- **Pitch:** https://drive.google.com/file/d/194LxpAAvyETm9IU5o-F5zp_4_6RVWSsS/view?usp=drive_link
+- **Vídeo demo:** https://drive.google.com/file/d/1cUrzlI9eWybZhSsjCt3ADgApfZlXUh3R/view
 
 ## En resumen
 
