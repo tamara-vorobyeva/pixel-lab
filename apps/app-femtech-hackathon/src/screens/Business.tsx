@@ -92,19 +92,32 @@ export function Jobs() {
           </ul>
         </div>
       ) : (
-        <ul role="tabpanel" className="grid gap-3">
+        <div role="tabpanel">
+        <div className="card mb-3 flex items-start gap-3 rounded-3xl bg-lilac border border-line p-4">
+          <BadgeCheck className="size-8 text-primary shrink-0" aria-hidden="true" />
+          <p className="text-sm">
+            <span className="block font-bold text-base">Empresa verificada = empresa fiable</span>
+            {settings.easyRead ? 'Este símbolo significa que puedes confiar en esta empresa.' : 'Las empresas con este símbolo son fiables: AdaptaTech ha comprobado que cumplen sus compromisos de inclusión y accesibilidad.'}
+          </p>
+        </div>
+        <ul className="grid gap-3">
           {companies.map((c) => (
             <Card as="li" key={c.name} className="p-4">
               <div className="flex gap-3 items-center">
                 <CompanyBadge name={c.name} color={c.color} />
                 <div className="flex-1"><p className="font-bold">{c.name}</p><p className="text-sm text-muted">{c.sector} · {c.size}</p></div>
-                <BadgeCheck className="size-7 text-primary" aria-label="Empresa inclusiva verificada" />
+                <span className="flex flex-col items-center text-primary shrink-0">
+                  <BadgeCheck className="size-7" aria-hidden="true" />
+                  <span className="text-[0.65rem] font-bold">Fiable</span>
+                  <span className="sr-only">: empresa verificada</span>
+                </span>
               </div>
               <ul className="grid gap-1 mt-3 text-sm">{c.highlights.map((h) => <li key={h} className="flex gap-2"><Check className="size-4 text-success shrink-0 mt-0.5" aria-hidden="true" />{h}</li>)}</ul>
               <p className="text-sm font-bold text-primary-strong mt-2">{offers.filter((o) => o.company === c.name).length} ofertas activas</p>
             </Card>
           ))}
         </ul>
+        </div>
       )}
       <Demo>Empresas y ofertas ficticias de demostración.</Demo>
     </Screen>

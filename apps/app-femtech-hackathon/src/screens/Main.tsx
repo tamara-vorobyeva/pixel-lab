@@ -5,6 +5,7 @@ import { Button, Card, ListLink, Logo, ProgressBar, Screen, Icon, toneBg } from 
 import { HeroIllustration } from '../components/Illustrations'
 import { Avatar } from '../components/Avatar'
 import { women } from '../data/content'
+import accessibilityIcon from '../assets/accessibility.jpg'
 
 export function Welcome() {
   const { go, announce } = useApp()
@@ -36,8 +37,8 @@ export function Home() {
   const [name, setName] = useState(progress.name)
 
   return (
-    <Screen title={progress.name ? `¡Hola, ${progress.name}!` : '¡Hola!'} back={false} subtitle={settings.easyRead ? 'Tu camino en la tecnología.' : 'Cada paso cuenta. Tu discapacidad no es un límite para la tecnología.'}
-      actions={<button aria-label="Ajustes de accesibilidad" onClick={() => go({ name: 'accessibility' })} className="size-11 grid place-items-center rounded-full bg-lilac text-primary-strong"><Accessibility className="size-6" aria-hidden="true" /></button>}>
+    <Screen title={progress.name ? `¡Hola, ${progress.name}!` : '¡Hola!'} back={false} center subtitle={settings.easyRead ? 'Tu camino en la tecnología.' : 'Cada paso cuenta. Tu discapacidad no es un límite para la tecnología.'}
+      actions={<button aria-label="Ajustes de accesibilidad" onClick={() => go({ name: 'accessibility' })} className="size-12 grid place-items-center rounded-full bg-white border border-line shadow-sm"><img src={accessibilityIcon} alt="" aria-hidden="true" className="size-9 object-contain" draggable={false} /></button>}>
       {!progress.name && (
         <Card className="p-4 mb-4">
           <form onSubmit={(e) => { e.preventDefault(); update((p) => ({ ...p, name: name.trim() })) }} className="flex gap-2 items-end">
