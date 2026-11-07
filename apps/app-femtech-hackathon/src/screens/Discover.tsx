@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, BookOpen, Briefcase, Check, ChevronRight, GraduationCap, ListChecks, Sparkles, Star, Wrench, Accessibility } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Briefcase, Check, ChevronRight, Crown, ExternalLink, GraduationCap, ListChecks, Sparkles, Star, Wrench, Accessibility } from 'lucide-react'
+import { pioneers, wikiSearch } from '../data/pioneers'
 import { useApp, computeResults } from '../store'
 import { quiz } from '../data/content'
 import { professions, professionById } from '../data/professions'
@@ -143,6 +144,30 @@ export function ProfessionDetail({ id }: { id: string }) {
           <p className="text-ink">{settings.easyRead ? p.easy : p.summary}</p>
         </div>
       </div>
+      <section className="mt-4" aria-labelledby="pioneras">
+        <h2 id="pioneras" className="font-display font-bold text-lg mb-2 flex items-center gap-2"><Crown className="size-5 text-[#B07A00]" aria-hidden="true" /> Mujeres pioneras</h2>
+        <ul className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 pb-1 snap-x">
+          {(pioneers[p.id] ?? []).map((w) => (
+            <li key={w.name} className="card snap-start shrink-0 w-64 rounded-3xl bg-surface border border-line p-4 flex flex-col gap-2 shadow-sm">
+              <div className="flex items-center gap-3">
+                <span className="size-12 rounded-full bg-gradient-to-br from-pink to-lilac text-primary-strong font-display font-bold grid place-items-center shrink-0" aria-hidden="true">
+                  {w.name[0] + w.name.split(' ').at(-1)![0]}
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-bold leading-tight">{w.name}</span>
+                  <span className="block text-xs text-muted">{[w.years, w.country].filter(Boolean).join(' · ')}</span>
+                </span>
+              </div>
+              <p className="text-sm flex-1">{settings.easyRead ? w.achievement.split('.')[0] + '.' : w.achievement}</p>
+              {w.disability && <span className="chip self-start rounded-full px-3 py-1 text-xs font-bold bg-success-soft text-success">{w.disability}</span>}
+              <a href={wikiSearch(w.name)} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary-strong underline underline-offset-2 inline-flex items-center gap-1 self-start">
+                Saber más <ExternalLink className="size-4" aria-hidden="true" /><span className="sr-only">sobre {w.name} en Wikipedia (se abre en otra pestaña)</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs text-muted mt-1">Perfiles públicos reales. Desliza para ver más.</p>
+      </section>
       <div className="grid gap-3 mt-4">
         {sections.map((s) => (
           <Card key={s.t} as="section" className="p-4">

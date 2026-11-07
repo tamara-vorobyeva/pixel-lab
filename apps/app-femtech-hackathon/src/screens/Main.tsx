@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Accessibility, ArrowRight, BookOpen, Compass, GraduationCap, Heart, Route as RouteIcon, Sparkles, Users, Wallet, Briefcase, Star, Settings as SettingsIcon } from 'lucide-react'
+import { Accessibility, ArrowRight, BookOpen, Compass, GraduationCap, Heart, Route as RouteIcon, Sparkles, Users, Wallet, Briefcase, Star, Building2, Settings as SettingsIcon } from 'lucide-react'
 import { useApp, STEPS, stepDone, computeResults } from '../store'
 import { Button, Card, ListLink, Logo, ProgressBar, Screen, Icon, toneBg } from '../components/ui'
 import { HeroIllustration } from '../components/Illustrations'
@@ -15,11 +15,14 @@ export function Welcome() {
       <h1 ref={h1} tabIndex={-1} className="outline-none"><Logo /></h1>
       <p className="font-display font-semibold text-lg mt-1">Sueña · Explora · Conecta</p>
       <p className="mt-4 text-lg text-ink max-w-xs">Tu guía en el mundo tech, <strong>sin barreras</strong> <Heart className="inline size-5 text-primary fill-primary" aria-hidden="true" /></p>
-      <HeroIllustration className="w-full max-w-[320px] my-4" />
+      <HeroIllustration className="w-full max-w-[250px] my-3" />
       <p className="text-sm text-muted max-w-xs mb-5">Te acompañamos desde descubrir lo que te gusta hasta tu primer empleo en tecnología.</p>
       <Button full onClick={() => go({ name: 'home' })} className="text-lg">Comenzar <ArrowRight className="size-5" aria-hidden="true" /></Button>
       <Button variant="ghost" className="mt-3" onClick={() => go({ name: 'accessibility' })}>
         <Accessibility className="size-5" aria-hidden="true" /> Configurar accesibilidad
+      </Button>
+      <Button variant="ghost" onClick={() => go({ name: 'business' })}>
+        <Building2 className="size-5" aria-hidden="true" /> Soy una empresa
       </Button>
     </div>
   )
@@ -66,6 +69,7 @@ export function Home() {
           <ListLink title="Profesiones" icon={<Sparkles className="size-7" />} tone="pink" onClick={() => go({ name: 'professions' })} />
           <ListLink title="Formación" icon={<GraduationCap className="size-7" />} tone="sky" onClick={() => go({ name: 'courses' })} />
           <ListLink title="Mentoras" icon={<Users className="size-7" />} onClick={() => go({ name: 'mentors' })} />
+          <ListLink title="Empleo" icon={<Briefcase className="size-7" />} tone="pink" onClick={() => go({ name: 'jobs' })} />
         </div>
       ) : (
         <>
@@ -85,6 +89,12 @@ export function Home() {
               <Button onClick={() => go({ name: 'quiz' })}>Empezar</Button>
             </Card>
           )}
+
+          <button onClick={() => go({ name: 'jobs' })} className="card w-full mb-5 flex items-center gap-4 rounded-3xl bg-sky border border-line p-4 text-left">
+            <Briefcase className="size-10 text-sky-ink shrink-0" aria-hidden="true" />
+            <span className="flex-1"><span className="block font-display font-bold">Empleo y prácticas</span><span className="text-sm">Empresas inclusivas que buscan talento como tú</span></span>
+            <ArrowRight className="size-5 text-sky-ink" aria-hidden="true" />
+          </button>
 
           <h2 className="font-display font-bold text-lg mb-3">Explora</h2>
           <ul className="grid grid-cols-2 gap-3 mb-6">
@@ -129,6 +139,8 @@ export function Explore() {
     { t: 'Mi itinerario', d: 'Tu camino paso a paso', r: 'itinerary', i: <RouteIcon className="size-7" />, tone: 'lilac' },
     { t: 'Mentoras y comunidad', d: 'Conecta con profesionales', r: 'mentors', i: <Users className="size-7" />, tone: 'sky' },
     { t: 'Recursos y becas', d: 'Ayudas, adaptaciones y empleo', r: 'resources', i: <BookOpen className="size-7" />, tone: 'pink' },
+    { t: 'Empleo y prácticas', d: 'Ofertas de empresas inclusivas', r: 'jobs', i: <Briefcase className="size-7" />, tone: 'lilac' },
+    { t: 'AdaptaTech Empresas', d: 'Para empresas que buscan talento', r: 'business', i: <Building2 className="size-7" />, tone: 'sky' },
   ] as const
   return (
     <Screen title="Explora" back={false}>
@@ -163,7 +175,7 @@ export function Profile() {
         <ListLink title="Mi itinerario" icon={<RouteIcon className="size-7" />} tone="pink" onClick={() => go({ name: 'itinerary' })} />
         <ListLink title="Mis resultados del test" desc={progress.quizDone ? 'Ver resultados' : 'Aún no has hecho el test'} icon={<Compass className="size-7" />} tone="sky" onClick={() => go({ name: progress.quizDone ? 'results' : 'quiz' })} />
         <ListLink title="Favoritos" icon={<Star className="size-7" />} onClick={() => go({ name: 'favorites' })} />
-        <ListLink title="Empleo y prácticas" icon={<Briefcase className="size-7" />} tone="pink" onClick={() => go({ name: 'resources' })} />
+        <ListLink title="Empleo y prácticas" desc={progress.visible ? 'Perfil visible para empresas' : 'Perfil oculto para empresas'} icon={<Briefcase className="size-7" />} tone="pink" onClick={() => go({ name: 'jobs' })} />
         <ListLink title="Borrar mis datos" desc="Se guardan solo en este dispositivo" icon={<SettingsIcon className="size-7" />} tone="sky"
           onClick={() => { if (confirm('¿Borrar tu progreso y ajustes de este dispositivo?')) { localStorage.clear(); location.reload() } }} />
       </div>

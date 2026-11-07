@@ -1,15 +1,16 @@
 import { useEffect, useRef, type ReactNode, type ButtonHTMLAttributes } from 'react'
 import {
-  Accessibility, Atom, Award, BarChart3, Bot, Brain, Briefcase, Building2, Check, ChevronLeft, ChevronRight, Code, Compass,
+  Accessibility, Atom, BriefcaseBusiness, Award, BarChart3, Bot, Brain, Briefcase, Building2, Check, ChevronLeft, ChevronRight, Code, Compass,
   Cpu, Gamepad2, Heart, House, Laptop, Meh, Search, Shield, Sparkles, Star, ThumbsUp, User, Users, Volume2, Wallet, Palette,
   type LucideIcon,
 } from 'lucide-react'
 import { useApp, type Route } from '../store'
+import logoUrl from '../assets/logo.png'
 
 const icons: Record<string, LucideIcon> = {
   cpu: Cpu, gamepad: Gamepad2, brain: Brain, shield: Shield, bot: Bot, palette: Palette, chart: BarChart3, code: Code,
   heart: Heart, sparkles: Sparkles, thumbs: ThumbsUp, meh: Meh, laptop: Laptop, atom: Atom, users: Users, award: Award,
-  accessibility: Accessibility, briefcase: Briefcase, building: Building2, wallet: Wallet,
+  accessibility: Accessibility, briefcase: Briefcase, building: Building2, wallet: Wallet, search: Search,
 }
 export function Icon({ name, className = 'size-6' }: { name: string; className?: string }) {
   const C = icons[name] ?? Sparkles
@@ -18,11 +19,22 @@ export function Icon({ name, className = 'size-6' }: { name: string; className?:
 
 export const toneBg = { lilac: 'bg-lilac text-primary-strong', pink: 'bg-pink text-pink-ink', sky: 'bg-sky text-sky-ink' } as const
 
+export function LogoMark({ className = 'h-10' }: { className?: string }) {
+  return <img src={logoUrl} alt="" aria-hidden="true" className={`${className} w-auto mix-blend-multiply select-none`} draggable={false} />
+}
+
 export function Logo({ size = 'lg' }: { size?: 'lg' | 'sm' }) {
+  if (size === 'sm') {
+    return (
+      <span className="font-display font-bold tracking-tight text-xl inline-flex items-center gap-2">
+        <LogoMark className="h-8" /><span className="text-primary-strong">Adapta</span><span className="text-primary -ml-2">Tech</span>
+      </span>
+    )
+  }
   return (
-    <span className={`font-display font-bold tracking-tight ${size === 'lg' ? 'text-5xl' : 'text-xl'} inline-flex items-center gap-1`}>
-      <Sparkles className={size === 'lg' ? 'size-9 text-[#E0A800]' : 'size-5 text-[#E0A800]'} aria-hidden="true" />
-      <span className="text-primary-strong">Adapta</span><span className="text-primary">Tech</span>
+    <span className="font-display font-bold tracking-tight text-5xl flex flex-col items-center">
+      <LogoMark className="h-28" />
+      <span><span className="text-primary-strong">Adapta</span><span className="text-primary">Tech</span></span>
     </span>
   )
 }
@@ -91,6 +103,10 @@ export function ProgressBar({ value, label }: { value: number; label: string }) 
   )
 }
 
+export function stopReading() {
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel() } catch { /* unsupported */ }
+}
+
 export function readAloud(text: string) {
   if (!('speechSynthesis' in window)) return false
   speechSynthesis.cancel()
@@ -116,11 +132,15 @@ export function Screen({ title, subtitle, children, back = true, actions, center
             <button onClick={goBack} className="size-11 grid place-items-center rounded-full hover:bg-lilac text-primary-strong" aria-label="Volver atrás">
               <ChevronLeft className="size-7" aria-hidden="true" />
             </button>
-          ) : <span className="w-2" />}
+          ) : <LogoMark className="h-10 -ml-1" />}
           <h1 ref={h1} tabIndex={-1} className={`flex-1 font-display font-bold text-xl text-ink ${center ? 'text-center' : ''} outline-none`}>{title}</h1>
           {settings.readAloud && (
-            <button className="size-11 grid place-items-center rounded-full bg-lilac text-primary-strong" aria-label="Leer esta pantalla en voz alta"
-              onClick={() => { const t = document.getElementById('main')?.innerText ?? ''; if (!readAloud(`${title}. ${t}`)) notify('Tu navegador no permite leer en voz alta') }}>
+            <button className="size-11 grid place-items-center rounded-full bg-lilac text-primary-strong" aria-label="Leer esta pantalla en voz alta o detener la lectura"
+              onClick={() => {
+                if ('speechSynthesis' in window && speechSynthesis.speaking) { stopReading(); return }
+                const t = document.getElementById('main')?.innerText ?? ''
+                if (!readAloud(`${title}. ${t}`)) notify('Tu navegador no permite leer en voz alta')
+              }}>
               <Volume2 className="size-6" aria-hidden="true" />
             </button>
           )}
@@ -155,6 +175,7 @@ export function ListLink({ title, desc, icon, onClick, tone = 'lilac', right }: 
 const tabs: { r: Route; label: string; I: LucideIcon }[] = [
   { r: { name: 'home' }, label: 'Inicio', I: House },
   { r: { name: 'explore' }, label: 'Explora', I: Compass },
+  { r: { name: 'jobs' }, label: 'Empleo', I: BriefcaseBusiness },
   { r: { name: 'favorites' }, label: 'Favoritos', I: Star },
   { r: { name: 'profile' }, label: 'Perfil', I: User },
 ]
@@ -162,10 +183,10 @@ const exploreRoutes = ['explore', 'quiz', 'results', 'professions', 'profession'
 
 export function BottomNav() {
   const { route, go } = useApp()
-  const activeFor = (n: string) => n === route.name || (n === 'explore' && exploreRoutes.includes(route.name)) || (n === 'profile' && route.name === 'accessibility')
+  const activeFor = (n: string) => n === route.name || (n === 'explore' && exploreRoutes.includes(route.name)) || (n === 'profile' && route.name === 'accessibility') || (n === 'jobs' && route.name === 'business')
   return (
     <nav aria-label="Navegación principal" className="sticky bottom-0 z-10 bg-surface border-t border-line">
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-5">
         {tabs.map(({ r, label, I }) => {
           const active = activeFor(r.name)
           return (

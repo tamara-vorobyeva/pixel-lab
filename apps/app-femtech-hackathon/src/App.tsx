@@ -5,6 +5,7 @@ import { Welcome, Home, Explore, Profile } from './screens/Main'
 import { Quiz, Results, Professions, ProfessionDetail } from './screens/Discover'
 import { Courses, Women, WomanDetail, Itinerary, Mentors, Resources, Favorites } from './screens/Learn'
 import { AccessibilitySettings, VoiceNav } from './screens/AccessibilitySettings'
+import { Jobs, Business } from './screens/Business'
 
 function CurrentScreen() {
   const { route } = useApp()
@@ -25,6 +26,8 @@ function CurrentScreen() {
     case 'accessibility': return <AccessibilitySettings />
     case 'favorites': return <Favorites />
     case 'profile': return <Profile />
+    case 'jobs': return <Jobs />
+    case 'business': return <Business />
   }
 }
 

@@ -7,7 +7,7 @@ export type Route =
   | { name: 'welcome' } | { name: 'home' } | { name: 'explore' } | { name: 'quiz' } | { name: 'results' }
   | { name: 'professions' } | { name: 'profession'; id: string } | { name: 'courses' } | { name: 'women' }
   | { name: 'woman'; id: string } | { name: 'itinerary' } | { name: 'mentors' } | { name: 'resources' }
-  | { name: 'accessibility' } | { name: 'favorites' } | { name: 'profile' }
+  | { name: 'accessibility' } | { name: 'favorites' } | { name: 'profile' } | { name: 'jobs' } | { name: 'business' }
 
 /* ---------- Settings ---------- */
 export interface Settings {
@@ -41,10 +41,16 @@ export interface Progress {
   joined: boolean
   competences: string[]
   manual: number[]
+  applied: string[]
+  visible: boolean
 }
 const defaultProgress: Progress = {
   name: '', answers: {}, quizDone: false, viewed: [], favCourses: [], favProfessions: [], favWomen: [],
-  contacted: [], joined: false, competences: [], manual: [],
+  contacted: [], joined: false, competences: [], manual: [], applied: [], visible: false,
+}
+
+function stopSpeech() {
+  try { if ('speechSynthesis' in window) speechSynthesis.cancel() } catch { /* unsupported */ }
 }
 
 function load<T>(key: string, fallback: T): T {
@@ -82,7 +88,7 @@ export const STEPS = [
   { title: 'Encontrar formación', desc: 'Guarda un curso o formación', route: { name: 'courses' } as Route },
   { title: 'Aprender competencias', desc: 'Marca 3 competencias que estás trabajando', route: { name: 'itinerary' } as Route },
   { title: 'Conectar con mentoras', desc: 'Escribe a una mentora o únete a la comunidad', route: { name: 'mentors' } as Route },
-  { title: 'Buscar prácticas y empleo', desc: 'Revisa programas de empleo inclusivo', route: { name: 'resources' } as Route },
+  { title: 'Buscar prácticas y empleo', desc: 'Muestra interés en una oferta de una empresa inclusiva', route: { name: 'jobs' } as Route },
 ]
 export function stepDone(p: Progress, i: number): boolean {
   if (p.manual.includes(i)) return true
@@ -92,6 +98,7 @@ export function stepDone(p: Progress, i: number): boolean {
     case 2: return p.favCourses.length > 0
     case 3: return p.competences.length >= 3
     case 4: return p.contacted.length > 0 || p.joined
+    case 5: return p.applied.length > 0
     default: return false
   }
 }
@@ -107,7 +114,7 @@ interface Ctx {
   resetSettings: () => void
   progress: Progress
   update: (fn: (p: Progress) => Progress) => void
-  toggleIn: (key: 'favCourses' | 'favProfessions' | 'favWomen' | 'competences' | 'contacted' | 'manual', id: string | number) => void
+  toggleIn: (key: 'favCourses' | 'favProfessions' | 'favWomen' | 'competences' | 'contacted' | 'manual' | 'applied', id: string | number) => void
   toast: string | null
   notify: (msg: string) => void
   announce: (msg: string) => void
@@ -137,12 +144,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     h.classList.toggle('easy', settings.easyRead)
   }, [settings])
 
+  // Stop any speech when read-aloud is switched off or the screen changes
+  useEffect(() => { if (!settings.readAloud) stopSpeech() }, [settings.readAloud])
+  useEffect(() => () => stopSpeech(), [stack])
+
   const announce = useCallback((m: string) => { setLiveMsg(''); setTimeout(() => setLiveMsg(m), 50) }, [])
   const notify = useCallback((m: string) => { setToast(m); announce(m); setTimeout(() => setToast((t) => (t === m ? null : t)), 3000) }, [announce])
 
   const go = useCallback((r: Route) => {
     if (r.name === 'home') save('at-onboarded', { v: true })
-    setStack((s) => (['home', 'explore', 'favorites', 'profile'].includes(r.name) ? [r] : [...s, r]))
+    setStack((s) => (['home', 'explore', 'jobs', 'favorites', 'profile'].includes(r.name) ? [r] : [...s, r]))
     if (r.name === 'profession') setProgress((p) => (p.viewed.includes(r.id) ? p : { ...p, viewed: [...p.viewed, r.id] }))
   }, [])
   const back = useCallback(() => setStack((s) => (s.length > 1 ? s.slice(0, -1) : [{ name: 'home' }])), [])
@@ -151,7 +162,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     route: stack[stack.length - 1], go, back, canGoBack: stack.length > 1,
     settings,
     setSetting: (k, v) => setSettings((s) => ({ ...s, [k]: v })),
-    resetSettings: () => setSettings(defaultSettings),
+    resetSettings: () => { stopSpeech(); setSettings(defaultSettings) },
     progress,
     update: (fn) => setProgress(fn),
     toggleIn: (key, id) => setProgress((p) => {
