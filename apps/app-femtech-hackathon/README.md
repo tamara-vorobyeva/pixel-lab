@@ -3,6 +3,15 @@
 Orientación académica y profesional en tecnología para chicas y mujeres jóvenes con discapacidad.
 Diseño basado en `Collage de pantallas_mockup_AdaptaTech.png`.
 
+**Demo pública:** https://adaptatech-2.pages.dev/
+
+## En resumen
+
+- **Para las usuarias:** test vocacional, 9 profesiones con mujeres pioneras reales, cursos, itinerario de 6 pasos, mentoras, becas y empleo con adaptaciones.
+- **Para las empresas:** portal B2B para cumplir la cuota del 2 % captando talento con discapacidad (principal fuente de ingresos).
+- **Accesibilidad como eje:** diseñada siguiendo WCAG 2.2 AA; cada usuaria adapta texto, contraste, voz y navegación.
+- **Privacidad:** sin cuentas; los datos se guardan solo en el dispositivo.
+
 ## Ejecutar
 
 ```bash
@@ -26,6 +35,7 @@ Cada profesión muestra **mujeres pioneras reales** (perfiles públicos, enlace 
 - Calculadora de la cuota de reserva del 2 % (empresas de 50+ personas, Ley General de Discapacidad).
 - Servicios: ofertas inclusivas, búsqueda de talento, asesoría en adaptaciones, patrocinio de becas, mentoría corporativa, informes de impacto.
 - Buscador de candidatas con perfiles anónimos: solo aparecen usuarias que activan «Hacer visible mi perfil»; la candidata decide si comparte su contacto.
+- Insignia de empresa verificada: indica una empresa fiable que cumple sus compromisos de inclusión.
 - Planes orientativos: Impulsa (gratis), Talento (249 €/mes), Partner (a medida) y formulario de contacto.
 
 ## Accesibilidad implementada
@@ -36,7 +46,7 @@ Cada profesión muestra **mujeres pioneras reales** (perfiles públicos, enlace 
 | Alto contraste | Cambia los tokens de color CSS + bordes de 2px y foco amarillo/negro |
 | Lectura fácil | Textos alternativos simplificados en test, profesiones e historias |
 | Botones grandes | Áreas táctiles ≥ 60px (por defecto ≥ 44px) |
-| Navegación sencilla | Inicio reducido a 4 acciones y botón “Inicio” en cada pantalla |
+| Navegación sencilla | Inicio reducido a 5 acciones y botón “Inicio” en cada pantalla |
 | Navegación por voz | Web Speech API (`es-ES`): “inicio”, “test”, “cursos”, “mentoras”, “atrás”, “leer”… (Chrome/Edge) |
 | Leer en voz alta | `speechSynthesis` lee la pantalla actual |
 | Subtítulos / transcripciones | Vídeos de historias con subtítulos sincronizados, transcripción y audio sintetizado |
@@ -44,6 +54,13 @@ Cada profesión muestra **mujeres pioneras reales** (perfiles públicos, enlace 
 | Lectores de pantalla | HTML semántico, ARIA (switch, radio, progressbar, aria-live), foco al título al cambiar de pantalla, enlace “Saltar al contenido” |
 
 Los ajustes y el progreso se guardan en `localStorage` (solo en el dispositivo).
+
+## Publicación y analítica
+
+- Alojada en **Cloudflare Pages** (subida manual). Para publicar una versión nueva: `npm run build` y, en Cloudflare, *Create new deployment* subiendo la carpeta `dist`.
+- La carpeta `dist` necesita un servidor web: no funciona abriendo `index.html` con doble clic.
+- **Cloudflare Web Analytics** está activada (Workers & Pages → proyecto → Metrics). Mide visitas, navegador, país y rendimiento (INP), sin cookies de seguimiento. No mide pantallas concretas, porque la app no cambia de URL al navegar.
+- Las visitas con bloqueadores de anuncios (Brave, AdBlock…) pueden no contarse.
 
 ## Simulado / qué haría falta en producción
 
