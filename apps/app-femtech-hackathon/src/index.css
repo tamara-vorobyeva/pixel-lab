@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* Design tokens: all colours are CSS variables so accessibility modes can override them. */
+@theme {
+  --font-sans: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-display: "Lexend", "Atkinson Hyperlegible", system-ui, sans-serif;
+
+  --color-bg: #fbf7ff;
+  --color-surface: #ffffff;
+  --color-ink: #24163f;
+  --color-muted: #5b4d78;
+  --color-line: #e7ddf8;
+  --color-primary: #6b3fd0;
+  --color-primary-strong: #4c2a9e;
+  --color-on-primary: #ffffff;
+  --color-lilac: #ede5ff;
+  --color-lavender: #f5f0ff;
+  --color-pink: #ffe0ef;
+  --color-pink-ink: #a3195b;
+  --color-sky: #dff1ff;
+  --color-sky-ink: #0b5a8f;
+  --color-success: #17734a;
+  --color-success-soft: #dcf5e8;
+  --color-warn: #8a5a00;
+}
+
+/* High contrast mode (WCAG 1.4.6 AAA-level ratios) */
+html.hc {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-ink: #000000;
+  --color-muted: #000000;
+  --color-line: #000000;
+  --color-primary: #3a0a8c;
+  --color-primary-strong: #22055a;
+  --color-lilac: #ffffff;
+  --color-lavender: #ffffff;
+  --color-pink: #ffffff;
+  --color-pink-ink: #6b0033;
+  --color-sky: #ffffff;
+  --color-sky-ink: #00305a;
+  --color-success: #004d26;
+  --color-success-soft: #ffffff;
+}
+html.hc .card,
+html.hc .chip,
+html.hc input,
+html.hc select { border: 2px solid #000 !important; }
+html.hc .hc-hide { display: none !important; }
+
+/* Wide text spacing (WCAG 1.4.12) */
+html.spacing body { letter-spacing: 0.06em; word-spacing: 0.16em; line-height: 1.8; }
+html.spacing p, html.spacing li { line-height: 1.9 !important; }
+
+/* Minimum target size 44px everywhere (WCAG 2.5.8 + iOS/Android guidelines) */
+button, [role="button"], a, label.tap, select, input[type="search"], input[type="text"] { min-height: 44px; }
+html.big button, html.big [role="button"], html.big label.tap, html.big select, html.big input[type="search"], html.big input[type="text"] { min-height: 60px; }
+html.big .btn { font-size: 1.15rem; padding-block: 1rem; }
+html.big .nav-item { min-height: 72px; }
+
+/* Visible focus (WCAG 2.4.7 / 2.4.13) */
+:focus-visible { outline: 3px solid var(--color-primary-strong); outline-offset: 3px; border-radius: 12px; }
+html.hc :focus-visible { outline: 4px solid #000; box-shadow: 0 0 0 7px #ffd400; }
+
+/* Reduced motion: user setting or OS preference */
+html.reduce-motion *, html.reduce-motion *::before, html.reduce-motion *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body { background: var(--color-bg); color: var(--color-ink); font-family: var(--font-sans); }
+h1, h2, h3, .font-display { font-family: var(--font-display); }
+
+.sr-only-focusable:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+.float { animation: float 4s ease-in-out infinite; }
+@keyframes pop { from { transform: scale(.96); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+.pop { animation: pop .25s ease-out; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }

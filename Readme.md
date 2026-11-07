@@ -20,6 +20,7 @@ You can test and review my active projects instantly in your browser:
     * **Agentic Workflow Management:** Governance file for the coding agent: "don't invent – stop and ask", no commits without approval.
     * **Quality Assurance:** Documentation review before hand-over: shared glossary, contradictions resolved, live forms checked against the specification.
   * **Highlights:** No Google sign-in; the public table never shows raw responses; deploys in about 40 minutes; 47 automated tests pass.
+  * **Additionally:** A mockup for the mobile application was created.
 
 ### 📱 Web Applications & Landings
 * 👗 **[Mylook365]([https://mylook365.de](https://www.mylook365.de/)** (Live Site)
