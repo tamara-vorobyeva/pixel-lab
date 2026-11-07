@@ -35,34 +35,54 @@ export function Home() {
   const next = STEPS.findIndex((_, i) => !stepDone(progress, i))
   const top = progress.quizDone ? computeResults(progress.answers).slice(0, 2) : []
   const [name, setName] = useState(progress.name)
+  const [askName, setAskName] = useState(false)
+  const pct = Math.round((done / STEPS.length) * 100)
+  // The quiz is step 0: when it is the next step, the hero card already offers it, so the separate test card is hidden.
+  const quizIsNext = next === 0
 
   return (
     <Screen title={progress.name ? `¡Hola, ${progress.name}!` : '¡Hola!'} back={false} center subtitle={settings.easyRead ? 'Tu camino en la tecnología.' : 'Cada paso cuenta. Tu discapacidad no es un límite para la tecnología.'}
       actions={<button aria-label="Ajustes de accesibilidad" onClick={() => go({ name: 'accessibility' })} className="size-12 grid place-items-center rounded-full bg-white border border-line shadow-sm"><img src={accessibilityIcon} alt="" aria-hidden="true" className="size-9 object-contain" draggable={false} /></button>}>
-      {!progress.name && (
-        <Card className="p-4 mb-4">
-          <form onSubmit={(e) => { e.preventDefault(); update((p) => ({ ...p, name: name.trim() })) }} className="flex gap-2 items-end">
-            <label className="flex-1 text-sm font-bold">¿Cómo quieres que te llamemos? <span className="font-normal text-muted">(opcional)</span>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} autoComplete="given-name" className="mt-1 w-full rounded-2xl border border-line bg-lavender px-4 py-2 font-normal text-base" />
-            </label>
-            <Button type="submit" variant="soft">Guardar</Button>
-          </form>
-        </Card>
-      )}
+      <div className="pt-4" />
 
-      <Card className="p-5 bg-gradient-to-br from-primary-strong to-primary text-on-primary border-0 mb-5">
-        <h2 className="font-display font-bold text-lg flex items-center gap-2"><RouteIcon className="size-5" aria-hidden="true" /> Mi itinerario</h2>
-        <p className="text-sm opacity-95 mb-3">{done} de {STEPS.length} pasos completados</p>
-        <div className="h-3 rounded-full bg-white/30 overflow-hidden" role="progressbar" aria-label="Progreso del itinerario" aria-valuenow={Math.round(done / STEPS.length * 100)} aria-valuemin={0} aria-valuemax={100}>
-          <div className="h-full bg-white rounded-full" style={{ width: `${(done / STEPS.length) * 100}%` }} />
+      {/* Hero: one card, one primary action */}
+      <Card className="p-6 bg-gradient-to-br from-primary-strong to-primary text-on-primary border-0 mb-6">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="font-display font-semibold text-lg flex items-center gap-2"><RouteIcon className="size-5" aria-hidden="true" /> Mi itinerario</h2>
+          <p className="text-sm opacity-90 tabular-nums whitespace-nowrap">{done} de {STEPS.length} pasos</p>
+        </div>
+        <div className="mt-3 h-2 rounded-full bg-primary-strong/70 ring-1 ring-white/40 overflow-hidden" role="progressbar" aria-label="Progreso del itinerario" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+          <div className="h-full bg-white rounded-full" style={{ width: `${pct}%` }} />
         </div>
         {next >= 0 && (
-          <button onClick={() => go(STEPS[next].route)} className="mt-4 w-full flex items-center justify-between rounded-2xl bg-white text-primary-strong px-4 py-3 font-bold">
-            <span className="text-left"><span className="block text-xs uppercase tracking-wide">Siguiente paso</span>{STEPS[next].title}</span>
-            <ArrowRight className="size-5" aria-hidden="true" />
-          </button>
+          <>
+            <p className="mt-6 text-sm opacity-90">Siguiente paso</p>
+            <p className="font-display font-semibold text-xl leading-snug text-balance">{STEPS[next].title}</p>
+            {quizIsNext && <p className="text-sm opacity-90 mt-1">Test de 7 preguntas · 3 minutos</p>}
+            <button onClick={() => go(STEPS[next].route)} className="btn mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full bg-white text-primary-strong px-6 py-3 font-bold transition hover:bg-lavender">
+              {quizIsNext ? 'Empezar el test' : 'Continuar'} <ArrowRight className="size-5" aria-hidden="true" />
+            </button>
+          </>
         )}
       </Card>
+
+      {/* Optional name: a quiet link that expands, instead of a form at the top */}
+      {!progress.name && (
+        askName ? (
+          <Card className="p-4 mb-6">
+            <form onSubmit={(e) => { e.preventDefault(); update((p) => ({ ...p, name: name.trim() })) }} className="flex gap-2 items-end">
+              <label className="flex-1 text-sm font-semibold">¿Cómo quieres que te llamemos? <span className="font-normal text-muted">(opcional)</span>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} autoComplete="given-name" autoFocus className="mt-2 w-full min-h-12 rounded-2xl border border-line bg-lavender px-4 py-2 font-normal text-base" />
+              </label>
+              <Button type="submit" variant="soft" className="min-h-12">Guardar</Button>
+            </form>
+          </Card>
+        ) : (
+          <button onClick={() => setAskName(true)} className="-mt-2 mb-6 px-2 text-sm font-semibold text-primary-strong hover:underline underline-offset-4">
+            + Añadir tu nombre (opcional)
+          </button>
+        )
+      )}
 
       {settings.simpleNav ? (
         <div className="grid gap-3">
@@ -75,30 +95,26 @@ export function Home() {
       ) : (
         <>
           {top.length > 0 ? (
-            <Card className="p-4 mb-5">
-              <h2 className="font-display font-bold mb-2">Tus profesiones recomendadas</h2>
+            <Card className="p-5 mb-6">
+              <h2 className="font-display font-semibold mb-3">Tus profesiones recomendadas</h2>
               <ul className="grid gap-2">
                 {top.map(({ profession: p, pct }) => (
                   <li key={p.id}><ListLink title={p.name} desc={`${pct}% de afinidad`} tone={p.tone} icon={<Icon name={p.icon} className="size-7" />} onClick={() => go({ name: 'profession', id: p.id })} /></li>
                 ))}
               </ul>
             </Card>
-          ) : (
-            <Card className="p-4 mb-5 flex gap-4 items-center bg-pink border-0">
-              <Compass className="size-10 text-pink-ink shrink-0" aria-hidden="true" />
-              <div className="flex-1"><h2 className="font-display font-bold">Descubre tu camino</h2><p className="text-sm">Test de 7 preguntas · 3 minutos</p></div>
-              <Button onClick={() => go({ name: 'quiz' })}>Empezar</Button>
-            </Card>
+          ) : !progress.quizDone && !quizIsNext && (
+            <div className="mb-6">
+              <ListLink title="Descubre tu camino" desc="Test de 7 preguntas · 3 minutos" tone="pink" icon={<Compass className="size-7" />} onClick={() => go({ name: 'quiz' })} />
+            </div>
           )}
 
-          <button onClick={() => go({ name: 'jobs' })} className="card w-full mb-5 flex items-center gap-4 rounded-3xl bg-sky border border-line p-4 text-left">
-            <Briefcase className="size-10 text-sky-ink shrink-0" aria-hidden="true" />
-            <span className="flex-1"><span className="block font-display font-bold">Empleo y prácticas</span><span className="text-sm">Empresas inclusivas que buscan talento como tú</span></span>
-            <ArrowRight className="size-5 text-sky-ink" aria-hidden="true" />
-          </button>
+          <div className="mb-8">
+            <ListLink title="Empleo y prácticas" desc="Empresas inclusivas que buscan talento como tú" tone="sky" icon={<Briefcase className="size-7" />} onClick={() => go({ name: 'jobs' })} />
+          </div>
 
-          <h2 className="font-display font-bold text-lg mb-3">Explora</h2>
-          <ul className="grid grid-cols-2 gap-3 mb-6">
+          <h2 className="font-display font-semibold text-lg mb-4">Explora</h2>
+          <ul className="grid grid-cols-2 gap-3 mb-8">
             {[
               { t: 'Profesiones', r: 'professions', i: <Sparkles className="size-7" />, tone: 'lilac' },
               { t: 'Formación y cursos', r: 'courses', i: <GraduationCap className="size-7" />, tone: 'sky' },
@@ -110,13 +126,13 @@ export function Home() {
               <li key={x.r}>
                 <button onClick={() => go({ name: x.r } as never)} className="card w-full h-full rounded-3xl bg-surface border border-line p-4 text-left hover:border-primary shadow-sm">
                   <span className={`size-12 rounded-2xl grid place-items-center mb-2 ${toneBg[x.tone as keyof typeof toneBg]}`} aria-hidden="true">{x.i}</span>
-                  <span className="font-bold leading-tight block">{x.t}</span>
+                  <span className="font-semibold leading-tight block">{x.t}</span>
                 </button>
               </li>
             ))}
           </ul>
 
-          <h2 className="font-display font-bold text-lg mb-3">Historia destacada</h2>
+          <h2 className="font-display font-semibold text-lg mb-4">Historia destacada</h2>
           <button onClick={() => go({ name: 'woman', id: women[0].id })} className="card w-full flex gap-4 items-center rounded-3xl bg-lilac p-4 text-left border border-line">
             <Avatar {...women[0].avatar} size={72} />
             <span>
