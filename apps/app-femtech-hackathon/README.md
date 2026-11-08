@@ -1,9 +1,11 @@
-# AdaptaTech – prototipo
+actualizado: 08.11.2026
+
+# AdaptaTech – prototipo MVP
 
 Orientación académica y profesional en tecnología para chicas y mujeres jóvenes con discapacidad.
-Diseño basado en `Collage de pantallas_mockup_AdaptaTech.png`.
 
-Proyecto desarrollado por el equipo **InGENiosas**.
+Proyecto desarrollado por el equipo **InGENiosas** como parte de La IIº Hackathona Yes We Tech (la segunda hackathon feminista organizada por Yes We Tech) el 6 y 7 de noviembre de 2026 en el GSEC (Google) en Málaga, España. 
+Gaanadora del 1. plazo.
 
 ## Enlaces
 
@@ -11,6 +13,8 @@ Proyecto desarrollado por el equipo **InGENiosas**.
 - **Ficha del proyecto:** https://drive.google.com/file/d/1hGpVcDF13a8eHikDzW1sRLLZg8gsVQbx/view?usp=drive_link
 - **Pitch:** https://drive.google.com/file/d/194LxpAAvyETm9IU5o-F5zp_4_6RVWSsS/view?usp=drive_link
 - **Vídeo demo:** https://drive.google.com/file/d/1cUrzlI9eWybZhSsjCt3ADgApfZlXUh3R/view
+- **Lean Canvas:** https://drive.google.com/drive/folders/1fUNQKG6vorvhpfPjzPgEMgUmqhbm8yaX
+- **Tecnología y Accesibilidad:** https://gemini.google.com/share/76e8083ab2f3?social_preview=false&skid=7ab29aad-6c20-441c-a322-51a56b48d9f8 
 
 ## En resumen
 
@@ -60,6 +64,10 @@ Cada profesión muestra **mujeres pioneras reales** (perfiles públicos, enlace 
 | Espaciado amplio, reducir animaciones | WCAG 1.4.12; respeta `prefers-reduced-motion` |
 | Lectores de pantalla | HTML semántico, ARIA (switch, radio, progressbar, aria-live), foco al título al cambiar de pantalla, enlace “Saltar al contenido” |
 
+## Estado del prototipo
+Prototipo MVP totalmente funcional disponible en entorno web. Ha sido validado y testeado con 200 personas
+reales, y la cifra continúa creciendo tras el lanzamiento de la campaña de comunicación en redes sociales.
+
 Los ajustes y el progreso se guardan en `localStorage` (solo en el dispositivo).
 
 ## Publicación y analítica
@@ -69,6 +77,8 @@ Los ajustes y el progreso se guardan en `localStorage` (solo en el dispositivo).
 - **Cloudflare Web Analytics** está activada (Workers & Pages → proyecto → Metrics). Mide visitas, navegador, país y rendimiento (INP), sin cookies de seguimiento. No mide pantallas concretas, porque la app no cambia de URL al navegar.
 - Las visitas con bloqueadores de anuncios (Brave, AdBlock…) pueden no contarse.
 
+
+
 ## Simulado / qué haría falta en producción
 
 - **Perfiles de mujeres y mentoras**: ficticios. Producción: CMS + referentes reales con consentimiento.
@@ -77,4 +87,4 @@ Los ajustes y el progreso se guardan en `localStorage` (solo en el dispositivo).
 - **Cursos, becas y recursos**: datos de ejemplo (algunas entidades reales, sin cifras ni fechas). Producción: base de datos curada y actualizada o APIs de las entidades.
 - **Empresas, ofertas, candidatas y planes**: ficticios. Producción: backend con cuentas de empresa, pagos (p. ej. Stripe), consentimiento RGPD explícito y verificación de empresas.
 - **Navegación por voz**: depende del navegador; para app nativa usar las APIs de voz de iOS/Android.
-- **Auditoría WCAG 2.2 AA**: diseñado con estos criterios, pero no auditado formalmente ni probado con usuarias.
+- **Auditoría WCAG 2.2 AA**: diseñado con estos criterios, pero no auditado formalmente ni probado con el público objetivo (probado por los usuarios captados a traves de las redes sociales).
