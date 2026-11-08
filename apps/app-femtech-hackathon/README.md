@@ -5,7 +5,7 @@ actualizado: 08.11.2026
 Orientación académica y profesional en tecnología para chicas y mujeres jóvenes con discapacidad.
 
 Proyecto desarrollado por el equipo **InGENiosas** como parte de La IIº Hackathona Yes We Tech (la segunda hackathon feminista organizada por Yes We Tech) el 6 y 7 de noviembre de 2026 en el GSEC (Google) en Málaga, España. 
-Gaanadora del 1. plazo.
+El MVP obtuvo el primer puesto según la valoración del jurado.
 
 ## Enlaces
 
